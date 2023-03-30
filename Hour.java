@@ -4,7 +4,10 @@ public class Hour {
     private boolean backup = false;
     private Task[] tasks;
 
-    public Hour(int hour) {
+    public Hour(int hour) throws IllegalArgumentException{
+        if (hour < 0 || hour > 23) {
+            throw new IllegalArgumentException();
+        }
         this.HOUR = hour;
     }
 
@@ -12,5 +15,12 @@ public class Hour {
     public Task getTasks() {return this.tasks; }
     
     public void setBackup(boolean backup) { this.backup = backup; }
-    public void setTimeAvailable(int remainingTime) {this.timeAvailable = remainingTime;}
+
+    public void setTimeAvailable(int remainingTime) throws IllegalArgumentException {
+        if (remainingTime > timeAvailable) {
+            throw new IllegalArgumentException();
+        }
+
+        this.timeAvailable = remainingTime;
+    }
 }
