@@ -18,6 +18,10 @@ public class Schedule {
     this.treatmentTasks = treatments;
     this.animals = animals;
 
+    for (int hour = 0; hour < 24; hour++) {
+      hourList[hour] = new Hour(hour);
+    }
+
     // creates a list of ids for orphaned animals that don't need to be fed regularly.
     ArrayList<Integer> orphans = new ArrayList<Integer>();
 
@@ -36,7 +40,15 @@ public class Schedule {
     this.tasks.put("treatment", this.treatmentTasks);
 
     // places the tasks that have been created, and the treatments from the database in the most time effecient way possible.
-    placeTasks();
+    try {
+      placeTasks(this.treatmentTasks, false);
+      placeTasks(this.feedingTasks, true);
+      placeTasks(this.cleaningTasks, false);
+
+    } catch (TimeConflictException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   public ArrayList<Integer> listBackups() {
@@ -48,8 +60,85 @@ public class Schedule {
   public LocalDate getDate() { return this.DATE; }
   public Hour[] getHourList() { return this.hourList; }
 
-  private void placeTasks() {
-    // TODO: make this
+  private void placeTasks(ArrayList<Task> tasks, boolean splitable) throws TimeConflictException {
+    ArrayList<Task> sortedTasks = sortByWindow(tasks);
+    for(Task task : sortedTasks) {
+      // get info about treatment
+      int startTime = task.getStartTime();
+      int maxWindow = task.getMaxWindow();
+      int duration = task.getDuration();
+
+      // loop through hours until one with enough room to fit the hour is found
+      boolean placed = false;
+      int hoursChecked = 0;
+      while (!placed && hoursChecked < maxWindow) {
+        // get info from currnt hour being considered
+        Hour hour = this.hourList[startTime + hoursChecked];
+        int timeAvailable = hour.getTimeAvailable();
+
+        // if there is room, place it
+        if (timeAvailable - duration >= 0) {
+          hour.getTasks().add(task);
+          hour.updateTimeAvailable(duration);
+          placed = true;
+        }
+
+        hoursChecked++;
+      }
+
+      // if task is splitable, split it, calling backups when necessary, else, look for backup as usual
+      if (!placed && splitable) {
+        
+      } else if (!placed) {
+        // for calling in a backup when there is no room available in the window but the task can not be split
+        hoursChecked = 0;
+        while (!placed && hoursChecked < maxWindow) {
+          // get info from currnt hour being considered
+          Hour hour = this.hourList[startTime + hoursChecked];
+          int timeAvailable = hour.getTimeAvailable();
+
+          // if there is no backup, and calling one in would help, schedule one and place the task
+          if (!hour.getBackupBoolean() && timeAvailable + 60 - duration >= 0) {
+            hour.setBackupBoolean(true);
+            hour.updateTimeAvailable(-60);
+            hour.getTasks().add(task);
+            hour.updateTimeAvailable(duration);
+            placed = true;
+          }
+
+          hoursChecked++;
+        }
+      }
+
+      // for when there is still no room in the available window and backup volunteers are already scheduled
+      if (!placed) {
+        throw new TimeConflictException();
+      }
+    }
+  }
+
+  private ArrayList<Task> sortByWindow(ArrayList<Task> tasks) {
+    // copy the array 
+    ArrayList<Task> tasks2 = new ArrayList<Task>();
+    for (Task task : tasks) { tasks2.add(task); }
+
+    // move lowest maxWindow task to the sorted array, one at a time
+    ArrayList<Task> sortedTasks = new ArrayList<Task>();
+    while (tasks2.size() > 0) {
+
+      // find task with smallest window
+      int smallestI = 0;
+      for (int i = 1; i < tasks2.size(); i++) {
+        if (tasks2.get(i).getMaxWindow() < tasks2.get(smallestI).getMaxWindow()) {
+          smallestI = i;
+        }
+      }
+
+      // add it to the sorted array and remove it from the copy
+      sortedTasks.add(tasks2.get(smallestI));
+      tasks2.remove(smallestI);
+    }
+    return sortedTasks;
   }
 
   private void generateTasks(ArrayList<Integer> orphanIDs) {
