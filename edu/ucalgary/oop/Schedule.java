@@ -15,6 +15,7 @@ public class Schedule {
 
   public Schedule(Animal[] animals, ArrayList<Task> treatments) {
 
+    // Initializing variables
     this.treatmentTasks = treatments;
     this.animals = animals;
 
@@ -52,15 +53,17 @@ public class Schedule {
   }
 
   public ArrayList<Integer> listBackups() {
+    // TODO: Figure out what this was for
     return new ArrayList<Integer>();
   }
 
+  // getters
   public Animal[] getAnimals() { return this.animals; }
   public HashMap<String, ArrayList<Task>> getTasks() { return this.tasks; }
   public LocalDate getDate() { return this.DATE; }
   public Hour[] getHourList() { return this.hourList; }
 
-  private void placeTasks(ArrayList<Task> tasks, boolean splitable) throws TimeConflictException {
+  private void placeTasks(ArrayList<Task> tasks, boolean splittable) throws TimeConflictException {
     ArrayList<Task> sortedTasks = sortByWindow(tasks);
     for(Task task : sortedTasks) {
       // get info about treatment
@@ -87,8 +90,9 @@ public class Schedule {
       }
 
       // if task is splitable, split it, calling backups when necessary, else, look for backup as usual
-      if (!placed && splitable) {
-        
+      if (!placed && splittable) {
+        // TODO: implement splitting feeding tasks and placing them efficiently
+
       } else if (!placed) {
         // for calling in a backup when there is no room available in the window but the task can not be split
         hoursChecked = 0;
@@ -112,6 +116,7 @@ public class Schedule {
 
       // for when there is still no room in the available window and backup volunteers are already scheduled
       if (!placed) {
+        // TODO: pass message parameters with this exception
         throw new TimeConflictException();
       }
     }
@@ -142,6 +147,7 @@ public class Schedule {
   }
 
   private void generateTasks(ArrayList<Integer> orphanIDs) {
+    // TODO: Refactor this code with loops and the enum
 
     // initiate arraylists to organise species
     ArrayList<Animal> coyotes = new ArrayList<Animal>();
