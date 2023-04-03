@@ -23,6 +23,9 @@ public class Feeding extends Task {
     public int getQuantity() {
         return hungryAnimals.size();
     }
+    public String getSpecies() {
+        return this.species;
+    }
 
     private static String createDescription(String species, ArrayList<Animal> hungryAnimals) {
         StringBuilder tmp = new StringBuilder();
