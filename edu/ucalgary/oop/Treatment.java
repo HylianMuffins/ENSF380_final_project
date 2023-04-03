@@ -3,14 +3,15 @@
 package edu.ucalgary.oop;
 
 
-public class Treatment{
+public class Treatment extends Task{
     private final int TREATMENTID;
     private int animalID;
 
-    /*
+    /* 
      Constructor to set treatmentId, id to their respective data fields.
     */
     public Treatment(int treatmentID, int animalid) {
+        super()
         this.TREATMENTID = treatmentID;
         this.animalID = animalid;   
     }

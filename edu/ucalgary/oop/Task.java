@@ -6,10 +6,11 @@ public class Task {
     private int maxWindow;
     private int startTime;
 
-    public Task(String description, int quantity, int duration, int maxWindow){
+    public Task(String description, int duration, int maxWindow, int startTIme){
         this.description = description;
         this.duration = duration;
         this.maxWindow = maxWindow;
+        
         
 
 
