@@ -10,10 +10,10 @@ public class Treatment extends Task{
     /* 
      Constructor to set treatmentId, id to their respective data fields.
     */
-    public Treatment(int treatmentID, int animalid) {
-        super();
+    public Treatment(String description, int duration, int maxWindow, int startTime, int treatmentID, int animalID) {
+        super(description, duration, maxWindow, startTime);
         this.TREATMENTID = treatmentID;
-        this.animalID = animalid;   
+        this.animalID = animalID;
     }
 
     // Getters
