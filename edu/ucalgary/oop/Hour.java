@@ -1,3 +1,5 @@
+package edu.ucalgary.oop;
+
 public class Hour {
     private int timeAvailable = 60;
     private final int HOUR;
@@ -19,6 +21,7 @@ public class Hour {
 
     // Getters and setters
     public int getHour() { return this.HOUR; } 
+    public int getTimeAvailable() {return this.timeAvailable; }
     public Task getTasks() {return this.tasks; }
     public boolean getBackupBoolean() { return this.backupBoolean; }
     public void setBackupBoolean(boolean backupBoolean) { this.backupBoolean = backupBoolean; }

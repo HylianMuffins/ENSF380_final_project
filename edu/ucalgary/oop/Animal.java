@@ -1,3 +1,5 @@
+package edu.ucalgary.oop;
+
 public class Animal {
     private String nickname;
     private final int ANIMALID;
@@ -7,10 +9,10 @@ public class Animal {
     * Constructor to set nickname, id and species to their respective
     * data fields.
     */
-    public Animal(String nickname, int id, Strng species) {
+    public Animal(String nickname, int id, String species) {
         this.nickname = nickname;
         this.ANIMALID = id;
-        this.ANIMALSPECIES = speices;
+        this.ANIMALSPECIES = species;
     }
 
     // Getters
