@@ -41,7 +41,7 @@ public class Feeding extends Task {
     private static int createDuration(String species, ArrayList<Animal> hungryAnimals) {
         int duration = 0;
         duration += AnimalTypes.valueOf(species.toUpperCase()).getTime()[0];
-        for (Animal animal : hungryAnimals) {
+        for (int i = 0; i < hungryAnimals.size(); i++) {
             duration += AnimalTypes.valueOf(species.toUpperCase()).getTime()[1];
         }
         return duration;

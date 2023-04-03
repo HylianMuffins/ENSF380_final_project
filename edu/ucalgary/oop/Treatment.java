@@ -11,7 +11,7 @@ public class Treatment extends Task{
      Constructor to set treatmentId, id to their respective data fields.
     */
     public Treatment(int treatmentID, int animalid) {
-        super()
+        super();
         this.TREATMENTID = treatmentID;
         this.animalID = animalid;   
     }
