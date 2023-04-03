@@ -1,7 +1,7 @@
 public class Hour {
     private int timeAvailable = 60;
     private final int HOUR;
-    private boolean backup = false;
+    private boolean backupBoolean = false;
     private ArrayList<Task> tasks;
 
     /*
@@ -20,7 +20,8 @@ public class Hour {
     // Getters and setters
     public int getHour() { return this.HOUR; } 
     public Task getTasks() {return this.tasks; }
-    public void setBackup(boolean backup) { this.backup = backup; }
+    public boolean getBackupBoolean() { return this.backupBoolean; }
+    public void setBackupBoolean(boolean backupBoolean) { this.backupBoolean = backupBoolean; }
 
     /*
      * Calculates the remaining available time of the hour
