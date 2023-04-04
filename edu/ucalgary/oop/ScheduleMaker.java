@@ -44,7 +44,7 @@ public class ScheduleMaker implements ActionListener, MouseListener{
         
         // Add the child panel onto the main panel.
         mainPanel.add(schedulePanel);
-        
+
         // Add the main panel onto the frame.
         frame.add(mainPanel);
         frame.setVisible(true);
@@ -55,10 +55,13 @@ public class ScheduleMaker implements ActionListener, MouseListener{
     	// else, print the confirm backup
     	try {
     		Schedule schedule = new Schedule(sqlData.getAnimals(), sqlData.getTreatments());
-        	JOptionPane.showMessageDialog(null, "Schedule has been successfully made!");
+            
+            for (Hour hour: schedule.getHourList()) {
+                //System.out.println(hour.getBackupBoolean());
+            }
+            JOptionPane.showMessageDialog(null, "Schedule has been successfully made!");
     	} catch (Exception e) {
     		JOptionPane.showMessageDialog(null, "Schedule is in need of backup, please confirm with the backups");
-    		
     	}
     }
     
@@ -74,8 +77,6 @@ public class ScheduleMaker implements ActionListener, MouseListener{
     }
 
     public void mousePressed(MouseEvent event){
-    	System.out.println("hi");
-        
     }
 
     public void mouseReleased(MouseEvent event){
@@ -84,7 +85,6 @@ public class ScheduleMaker implements ActionListener, MouseListener{
 
     
     public static void main(String[] args) {
-
         EventQueue.invokeLater(() -> {
             new ScheduleMaker();        
         });
