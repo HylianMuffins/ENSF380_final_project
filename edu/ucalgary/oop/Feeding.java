@@ -26,6 +26,9 @@ public class Feeding extends Task {
     public String getSpecies() {
         return this.species;
     }
+    public ArrayList<Animal> getHungryAnimals() {
+        return this.hungryAnimals;
+    }
 
     private static String createDescription(String species, ArrayList<Animal> hungryAnimals) {
         StringBuilder tmp = new StringBuilder();
@@ -36,6 +39,7 @@ public class Feeding extends Task {
             } else {
                 tmp.append(", " + animal.getNickname());
             }
+            i++;
         }
         String animalString = tmp.toString();
         return String.format("Feeding - %s (%d: %s)", species, hungryAnimals.size(), animalString);

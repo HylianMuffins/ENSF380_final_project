@@ -5,22 +5,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Schedule {
-  private Hour[] hourList = new Hour[24];
+  private ArrayList<Hour> hourList = new ArrayList<Hour>();
   private LocalDate DATE;
-  private Animal[] animals;
+  private ArrayList<Animal> animals;
   private ArrayList<Task> cleaningTasks = new ArrayList<Task>();
   private ArrayList<Task> feedingTasks = new ArrayList<Task>();
   private ArrayList<Task> treatmentTasks = new ArrayList<Task>();
   private HashMap<String, ArrayList<Task>> tasks = new HashMap<String, ArrayList<Task>>();
 
-  public Schedule(Animal[] animals, ArrayList<Task> treatments) {
+  public Schedule(ArrayList<Animal> animals, ArrayList<Task> treatments) throws TimeConflictException, CloneNotSupportedException {
 
     // Initializing variables
     this.treatmentTasks = treatments;
     this.animals = animals;
 
     for (int hour = 0; hour < 24; hour++) {
-      hourList[hour] = new Hour(hour);
+      hourList.set(hour, new Hour(hour));
     }
 
     // creates a list of ids for orphaned animals that don't need to be fed regularly.
@@ -41,32 +41,21 @@ public class Schedule {
     this.tasks.put("treatment", this.treatmentTasks);
 
     // places the tasks that have been created, and the treatments from the database in the most time effecient way possible.
-    try {
-      placeTasks(this.treatmentTasks, false);
-      placeTasks(this.feedingTasks, true);
-      placeTasks(this.cleaningTasks, false);
-
-    } catch (TimeConflictException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-  }
-
-  public ArrayList<Integer> listBackups() {
-    // TODO: Figure out what this was for
-    return new ArrayList<Integer>();
+    placeTasks(this.treatmentTasks, false);
+    placeTasks(this.feedingTasks, true);
+    placeTasks(this.cleaningTasks, false);
   }
 
   // getters
-  public Animal[] getAnimals() { return this.animals; }
+  public ArrayList<Animal> getAnimals() { return this.animals; }
   public HashMap<String, ArrayList<Task>> getTasks() { return this.tasks; }
   public LocalDate getDate() { return this.DATE; }
-  public Hour[] getHourList() { return this.hourList; }
+  public ArrayList<Hour> getHourList() { return this.hourList; }
 
-  private void placeTasks(ArrayList<Task> tasks, boolean splittable) throws TimeConflictException {
+  private void placeTasks(ArrayList<Task> tasks, boolean splittable) throws TimeConflictException, CloneNotSupportedException {
     ArrayList<Task> sortedTasks = sortByWindow(tasks);
     for(Task task : sortedTasks) {
-      // get info about treatment
+      // get info about task
       int startTime = task.getStartTime();
       int maxWindow = task.getMaxWindow();
       int duration = task.getDuration();
@@ -76,7 +65,7 @@ public class Schedule {
       int hoursChecked = 0;
       while (!placed && hoursChecked < maxWindow) {
         // get info from currnt hour being considered
-        Hour hour = this.hourList[startTime + hoursChecked];
+        Hour hour = this.hourList.get(startTime + hoursChecked);
         int timeAvailable = hour.getTimeAvailable();
 
         // if there is room, place it
@@ -91,14 +80,51 @@ public class Schedule {
 
       // if task is splitable, split it, calling backups when necessary, else, look for backup as usual
       if (!placed && splittable) {
-        // TODO: implement splitting feeding tasks and placing them efficiently
+
+        // create list of hours within the window
+        ArrayList<Hour> window = (ArrayList<Hour>)this.hourList.subList(startTime, startTime + maxWindow);
+
+        // choose most empty hours in window first one at a time, until all animals are fed, or all hours have been checked
+        // places tasks in copy first until it is decided they will fit
+
+        Task taskToBeSplit = task;
+        boolean canBePlaced = false;
+        while (true) {
+          // clone window of hours
+          ArrayList<Hour> windowCopy = new ArrayList<Hour>();
+          for (Hour hour : sortByTimeAvailable(window)) {
+            windowCopy.add((Hour)hour.clone());
+          }
+          
+          canBePlaced = splitFeeding(windowCopy, taskToBeSplit, canBePlaced);
+
+          // handle exiting the loop or scheduling backups
+          if (canBePlaced) {
+            break;
+          } else {
+            // look for place to schedule backup
+            boolean scheduled = false;
+            for (Hour hour : window) {
+              if (!hour.getBackupBoolean()) {
+                hour.setBackupBoolean(true);
+                hour.updateTimeAvailable(-60);
+                scheduled = true;
+                break;
+              }
+            }
+            if (!scheduled) { throw new TimeConflictException(); }
+          }
+        }
+        if(canBePlaced) {
+          splitFeeding(window, task, canBePlaced);
+        }
 
       } else if (!placed) {
         // for calling in a backup when there is no room available in the window but the task can not be split
         hoursChecked = 0;
         while (!placed && hoursChecked < maxWindow) {
           // get info from currnt hour being considered
-          Hour hour = this.hourList[startTime + hoursChecked];
+          Hour hour = this.hourList.get(startTime + hoursChecked);
           int timeAvailable = hour.getTimeAvailable();
 
           // if there is no backup, and calling one in would help, schedule one and place the task
@@ -116,10 +142,55 @@ public class Schedule {
 
       // for when there is still no room in the available window and backup volunteers are already scheduled
       if (!placed) {
-        // TODO: pass message parameters with this exception
         throw new TimeConflictException();
       }
     }
+  }
+
+  private boolean splitFeeding(ArrayList<Hour> window, Task taskToBeSplit, boolean willBePlaced) {
+
+    boolean canBePlaced = false;
+
+    // fill hours
+    for (Hour hour : sortByTimeAvailable(window)) {
+      // get info about hour and the task
+      int freeTime = hour.getTimeAvailable();
+      String species = ((Feeding)taskToBeSplit).getSpecies();
+      int prepTime = AnimalTypes.valueOf(species).getTime()[0];
+      int feedingTime = AnimalTypes.valueOf(species).getTime()[1];
+
+      // calculate # of animals that can be fed
+      int animalRoom = (freeTime - prepTime) / feedingTime;
+      if (animalRoom == 0) { continue; }
+      ArrayList<Animal> hungryAnimalsToSplit = ((Feeding)taskToBeSplit).getHungryAnimals();
+
+      // take the first (animalRoom) animals and make a new task for feeding them
+      ArrayList<Animal> splitOffAnimals = new ArrayList<Animal>();
+      for (Animal animal : (ArrayList<Animal>)hungryAnimalsToSplit.subList(0, animalRoom)) { 
+        splitOffAnimals.add(animal); 
+      }
+      Feeding splitOffTask = new Feeding(species, splitOffAnimals);
+
+      // add new task to hour
+      hour.getTasks().add(splitOffTask);
+      hour.updateTimeAvailable(splitOffTask.getDuration());
+
+      // update the task to be split and go again, or exit the loop, if there are no more animals to feed
+      ArrayList<Animal> leftOverAnimals = new ArrayList<Animal>();
+      for (Animal animal : (ArrayList<Animal>)hungryAnimalsToSplit.subList(animalRoom, hungryAnimalsToSplit.size())) { 
+        leftOverAnimals.add(animal); 
+      }
+
+      if(leftOverAnimals.size() > 0) {
+        taskToBeSplit = new Feeding(species, leftOverAnimals);
+      } else {
+        canBePlaced = true;
+        break;
+      }
+
+    }
+
+    return canBePlaced;
   }
 
   private ArrayList<Task> sortByWindow(ArrayList<Task> tasks) {
@@ -146,6 +217,33 @@ public class Schedule {
     return sortedTasks;
   }
 
+  private ArrayList<Hour> sortByTimeAvailable(ArrayList<Hour> hourList) {
+    // copy array
+    ArrayList<Hour> hours2 = new ArrayList<Hour>();
+    for (Hour hour : hourList) { hours2.add(hour); }
+
+    // create list to store sorted hours
+    ArrayList<Hour> sortedHours = new ArrayList<Hour>();
+
+    // move emptiest hour to the sorted array, one at a time
+    while (hours2.size() > 0) {
+
+      // find hour with most time available
+      int highestTimeI = 0;
+      for (int i = 1; i < hours2.size(); i++) {
+        if (hours2.get(i).getTimeAvailable() < hours2.get(highestTimeI).getTimeAvailable()) {
+          highestTimeI = i;
+        }
+      }
+
+      // add it to the sorted array and remove it from the copy
+      sortedHours.add(hours2.get(highestTimeI));
+      hours2.remove(highestTimeI);
+    }
+
+    return sortedHours;
+  }
+
   private void generateTasks(ArrayList<Integer> orphanIDs) {
     // TODO: Refactor this code with loops and the enum
 
@@ -157,11 +255,11 @@ public class Schedule {
     ArrayList<Animal> raccoons = new ArrayList<Animal>();
 
     for (Animal animal : this.animals) {
-      if (animal.getSpecies().toLowerCase() == "coyote") { coyotes.add(animal); }
-      else if (animal.getSpecies().toLowerCase() == "fox") { foxes.add(animal); }
-      else if (animal.getSpecies().toLowerCase() == "porcupine") { porcupines.add(animal); }
-      else if (animal.getSpecies().toLowerCase() == "beaver") { beavers.add(animal); }
-      else if (animal.getSpecies().toLowerCase() == "raccoon") { raccoons.add(animal); }
+      if (animal.getSpecies().toLowerCase().equals("coyote")) { coyotes.add(animal); }
+      else if (animal.getSpecies().toLowerCase().equals("fox")) { foxes.add(animal); }
+      else if (animal.getSpecies().toLowerCase().equals("porcupine")) { porcupines.add(animal); }
+      else if (animal.getSpecies().toLowerCase().equals("beaver")) { beavers.add(animal); }
+      else if (animal.getSpecies().toLowerCase().equals("raccoon")) { raccoons.add(animal); }
     }
 
     // Make lists of animals to be fed
