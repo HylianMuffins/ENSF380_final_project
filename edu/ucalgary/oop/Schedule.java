@@ -7,13 +7,13 @@ import java.util.HashMap;
 public class Schedule {
   private Hour[] hourList = new Hour[24];
   private LocalDate DATE;
-  private Animal[] animals;
+  private ArrayList<Animal> animals;
   private ArrayList<Task> cleaningTasks = new ArrayList<Task>();
   private ArrayList<Task> feedingTasks = new ArrayList<Task>();
   private ArrayList<Task> treatmentTasks = new ArrayList<Task>();
   private HashMap<String, ArrayList<Task>> tasks = new HashMap<String, ArrayList<Task>>();
 
-  public Schedule(Animal[] animals, ArrayList<Task> treatments) {
+  public Schedule(ArrayList<Animal> animals, ArrayList<Task> treatments) {
 
     // Initializing variables
     this.treatmentTasks = treatments;

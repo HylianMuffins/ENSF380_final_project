@@ -10,11 +10,13 @@ import java.awt.event.*;
 import java.awt.GridBagLayout;
 
 public class ScheduleMaker implements ActionListener, MouseListener{
+    private SqlConnector sqlData = new SqlConnector();
+
     public ScheduleMaker() {
         setupGUI();
     }
     
-    public void setupGUI(){
+    private void setupGUI(){
     	// Creates the frame called "Schedule Builder" to contain 
     	//the necessary components, also setting the size and location when created.
     	JFrame frame = new JFrame("Schedule Builder");
@@ -52,7 +54,7 @@ public class ScheduleMaker implements ActionListener, MouseListener{
     	// Check if schedule is made successfully, if it is print the message success message
     	// else, print the confirm backup
     	try {
-    		Schedule schedule = new Schedule();
+    		Schedule schedule = new Schedule(sqlData.getAnimals(), sqlData.getTreatments());
         	JOptionPane.showMessageDialog(null, "Schedule has been successfully made!");
     	} catch (Exception e) {
     		JOptionPane.showMessageDialog(null, "Schedule is in need of backup, please confirm with the backups");
@@ -82,10 +84,10 @@ public class ScheduleMaker implements ActionListener, MouseListener{
 
     
     public static void main(String[] args) {
+
         EventQueue.invokeLater(() -> {
             new ScheduleMaker();        
         });
-        
        
     }
         
