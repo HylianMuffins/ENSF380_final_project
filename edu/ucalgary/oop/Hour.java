@@ -2,7 +2,7 @@ package edu.ucalgary.oop;
 
 import java.util.ArrayList;
 
-public class Hour {
+public class Hour implements Cloneable{
     private int timeAvailable = 60;
     private final int HOUR;
     private boolean backupBoolean = false;
@@ -37,5 +37,15 @@ public class Hour {
         }
 
         this.timeAvailable = this.timeAvailable - timeTaken;
+    }
+
+    // cloner
+    public Object clone() throws CloneNotSupportedException {
+
+        // create new object
+        // copies of tasks can be shallow because they are not used
+        Hour copy = (Hour)super.clone();
+
+        return copy;
     }
 }
