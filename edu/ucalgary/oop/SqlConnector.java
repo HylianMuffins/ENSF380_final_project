@@ -10,16 +10,16 @@ public class SqlConnector {
   public SqlConnector() {
     try{
       // create connection with oop user
-      Class.forName("com.mysql.cj.jdbc.Driver");  
+      Class.forName("com.mysql.cj.jdbc.Driver");
       Connection con=DriverManager.getConnection("jdbc:mysql://localhost/EWR","oop","password");
 
-      // write and execute a query that gets all the animal info 
+      // write and execute a query that gets all the animal info
       Statement stmt=con.createStatement();
       ResultSet animalResults = stmt.executeQuery("SELECT * FROM animals");
 
       // add an animal to the arraylist for each result
       while(animalResults.next()) {
-        this.animals.add( new Animal(animalResults.getString(2), 
+        this.animals.add( new Animal(animalResults.getString(2),
           animalResults.getInt(1), animalResults.getString(3)));
       }
 
@@ -28,7 +28,7 @@ public class SqlConnector {
 
       // add a treatment to the arraylist for each result
       while(treatmentResults.next()) {
-        this.treatments.add( new Treatment(treatmentResults.getString(6), treatmentResults.getInt(7), 
+        this.treatments.add( new Treatment(treatmentResults.getString(6), treatmentResults.getInt(7),
           treatmentResults.getInt(8), treatmentResults.getInt(4), treatmentResults.getInt(1),
           treatmentResults.getInt(2)));
       }
