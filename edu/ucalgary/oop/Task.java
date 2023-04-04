@@ -6,14 +6,11 @@ public class Task {
     private int maxWindow;
     private int startTime;
 
-    public Task(String description, int duration, int maxWindow, int startTIme){
+    public Task(String description, int duration, int maxWindow, int startTime){
         this.description = description;
         this.duration = duration;
         this.maxWindow = maxWindow;
-        
-        
-
-
+        this.startTime = startTime;
     }
 
     public void setStartTime(int sTime) { 
