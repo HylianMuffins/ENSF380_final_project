@@ -6,7 +6,7 @@ public class Hour {
     private int timeAvailable = 60;
     private final int HOUR;
     private boolean backupBoolean = false;
-    private ArrayList<Task> tasks;
+    private ArrayList<Task> tasks = new ArrayList<Task>();
 
     /*
      * Constructor taking in hour and setting the HOUR variable,
