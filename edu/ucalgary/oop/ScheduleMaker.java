@@ -7,6 +7,7 @@ import java.awt.EventQueue;
 import javax.swing.*;
 
 import java.awt.event.*;
+import java.util.*;
 import java.awt.GridBagLayout;
 
 public class ScheduleMaker implements ActionListener, MouseListener{
@@ -55,14 +56,25 @@ public class ScheduleMaker implements ActionListener, MouseListener{
     	// else, print the confirm backup
     	try {
     		Schedule schedule = new Schedule(sqlData.getAnimals(), sqlData.getTreatments());
-            
+            ArrayList<String> confirmBackupMessage = new ArrayList<String>();
+
             for (Hour hour: schedule.getHourList()) {
-                //System.out.println(hour.getBackupBoolean());
+                if (hour.getBackupBoolean()) {
+                    confirmBackupMessage.add("A backup is needed at " + hour.getHour());
+                }
+            }
+
+            if (confirmBackupMessage.size() != 0) {
+                // TODO: change this to a specific exception later
+                throw new Exception();
             }
             JOptionPane.showMessageDialog(null, "Schedule has been successfully made!");
     	} catch (Exception e) {
     		JOptionPane.showMessageDialog(null, "Schedule is in need of backup, please confirm with the backups");
-    	}
+    	} catch (TimeConflictException e) {
+            
+        }
+
     }
     
     public void mouseClicked(MouseEvent event){
