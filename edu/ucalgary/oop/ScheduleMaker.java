@@ -12,6 +12,7 @@ import java.awt.GridBagLayout;
 
 public class ScheduleMaker implements ActionListener, MouseListener{
     private SqlConnector sqlData = new SqlConnector();
+    private String scheduleString = "";
 
     public ScheduleMaker() {
         setupGUI();
@@ -68,6 +69,8 @@ public class ScheduleMaker implements ActionListener, MouseListener{
                 // TODO: change this to a specific exception later
                 throw new Exception();
             }
+
+            createScheduleString(schedule);
             JOptionPane.showMessageDialog(null, "Schedule has been successfully made!");
     	} catch (Exception e) {
     		JOptionPane.showMessageDialog(null, "Schedule is in need of backup, please confirm with the backups");
@@ -77,6 +80,27 @@ public class ScheduleMaker implements ActionListener, MouseListener{
 
     }
     
+    private String createScheduleString(Schedule schedule) {
+        this.scheduleString += "Schedule for " + schedule.getDate().toString() + "\n\n";
+
+        // Loops through each hour, and if the time available has not changed then don't
+        // store it into the string, otherwise, store the necessary information.
+        schedule.getHourList().forEach(hour -> {
+            if (hour.getTimeAvailable() < 60) {
+                scheduleString += String.valueOf(hour.getHour()) + ":00\n";
+
+                // Loops through all tasks that are needed in that hour, and store its description
+                // into the string
+                for (int i = 0; i < hour.getTasks().size(); i++) {
+                    scheduleString += "* " + hour.getTasks().get(i).getDescription(); 
+                }
+
+            }
+        });
+        
+        return scheduleString;
+    }
+
     public void mouseClicked(MouseEvent event){
     }
     
