@@ -13,15 +13,15 @@ import java.io.*;
 public class ScheduleMaker implements ActionListener, MouseListener{
     private SqlConnector sqlData = new SqlConnector();
     private String scheduleString = "";
+    private JFrame frame = new JFrame("Schedule Builder");
 
     public ScheduleMaker() {
         setupGUI();
     }
     
     private void setupGUI(){
-    	// Creates the frame called "Schedule Builder" to contain 
+    	// Sets up the frame called to contain 
     	//the necessary components, also setting the size and location when created.
-    	JFrame frame = new JFrame("Schedule Builder");
     	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	frame.setSize(500, 250);
     	frame.setLocationRelativeTo(null);
@@ -53,27 +53,87 @@ public class ScheduleMaker implements ActionListener, MouseListener{
     }
     
     public void actionPerformed(ActionEvent event){
+        LinkedHashMap<Integer, String> confirmBackupMessage = new LinkedHashMap<Integer, String>();
     	// Check if schedule is made successfully, if it is print the message success message
     	// else, print the confirm backup
     	try {
     		Schedule schedule = new Schedule(sqlData.getAnimals(), sqlData.getTreatments());
-            ArrayList<String> confirmBackupMessage = new ArrayList<String>();
 
+            // Checks if backup is needed at all
             for (Hour hour: schedule.getHourList()) {
                 if (hour.getBackupBoolean()) {
-                    confirmBackupMessage.add("A backup is needed at " + hour.getHour());
+                    confirmBackupMessage.put(hour.getHour(), "A backup is needed at " + hour.getHour() + ":00");
                 }
             }
 
             if (confirmBackupMessage.size() != 0) {
-                throw new UnconfirmedBackupsException();
+               throw new UnconfirmedBackupsException();
             }
 
-            createTextFile(createScheduleString(schedule));
+            createTextFile(createScheduleString(schedule, null));
             
-            JOptionPane.showMessageDialog(null, "Schedule has been successfully made!");
+            JOptionPane.showMessageDialog(null, "Schedule has been successfully made! Closing the program...");
+            frame.dispose();
+            
     	} catch (UnconfirmedBackupsException e) {
-    		JOptionPane.showMessageDialog(null, "Schedule is in need of backup, please confirm with the backups");
+            // Notifies user that backup is needed
+    		JOptionPane.showMessageDialog(null, "Schedule is in need of backup, please confirm");
+            Object[] options = {"Available", "Not Available"};
+            HashMap <Integer, Integer> confirmation = new HashMap<Integer, Integer>();
+
+            // Confirms backup with the user, if backup is available store as 0, otherwise, store as 1 for not available
+            // If the user exits the confirmation prompt, then re-prompt the user until an option is selected.
+            confirmBackupMessage.forEach((hour, message) -> {
+                while(true) {
+                    int userChoice = 0;
+
+                    userChoice = (JOptionPane.showOptionDialog(frame, message, "Backup Confirmation",
+                        JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE, null, options, options[1]));
+
+                    if (userChoice == 0 || userChoice == 1) {
+                        confirmation.put(hour, Integer.valueOf(userChoice));
+                        break;
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Please confirm the availability of the backup!");
+                    }
+                }
+            });
+            
+            // If confirmation contains a 1, then the user has selected that a backup is unavailable at a specific time.
+            // Otherwise, all backups are available and the schedule will be genereated.
+            if (confirmation.containsValue(Integer.valueOf(1))) {
+                //TODO: Zach will do this :)
+                // General Comments that may help?:
+                /*
+                 * The variable 'confirmation' stores the information of the 'hour' as the key, and an Integer (not int) as a value.
+                 * The value stored will be 0 if the back up is available, 1 if they are not available.
+                 * 
+                 * 
+                 */
+
+                 try {
+                    Schedule schedule = new Schedule(sqlData.getAnimals(), sqlData.getTreatments());
+                    
+
+                }catch (CloneNotSupportedException e1) {
+                } catch (TimeConflictException e1) {
+
+                }
+            } else {
+                //Reattempts to create the schedule with the all available backups listed in the text.
+                try {
+                    Schedule schedule = new Schedule(sqlData.getAnimals(), sqlData.getTreatments());
+                    
+                    createTextFile(createScheduleString(schedule, confirmation));
+
+                    JOptionPane.showMessageDialog(null, "Schedule has been successfully made!\n Closing the program...");
+                    frame.dispose();
+                } catch (CloneNotSupportedException e1) {
+                } catch (TimeConflictException e1) {
+
+                }
+            }
+            
     	} catch (TimeConflictException e) {
             
         } catch (Exception e) {
@@ -83,14 +143,20 @@ public class ScheduleMaker implements ActionListener, MouseListener{
 
     }
     
-    private String createScheduleString(Schedule schedule) {
+    private String createScheduleString(Schedule schedule, HashMap<Integer, Integer> backups) {
         this.scheduleString += "Schedule for " + schedule.getDate().toString() + "\n\n";
         // Loops through each hour, and if the time available has not changed then don't
         // store it into the string, otherwise, store the necessary information.
         schedule.getHourList().forEach(hour -> {
             if (hour.getTimeAvailable() < 60) {
-                scheduleString += String.valueOf(hour.getHour()) + ":00\n";
+                scheduleString += String.valueOf(hour.getHour()) + ":00";
 
+                if (backups.containsKey(Integer.valueOf(hour.getHour()))) {
+                    scheduleString += " [+ backup volunteer]\n";
+                } else {
+                    scheduleString += "\n";
+                }
+                
                 // Loops through all tasks that are needed in that hour, and store its description
                 // into the string
                 for (int i = 0; i < hour.getTasks().size(); i++) {
@@ -101,10 +167,12 @@ public class ScheduleMaker implements ActionListener, MouseListener{
             }
         });
         
-        return scheduleString;
+        return scheduleString.trim();
     }
 
-    private void createTextFile(String schedule) {
+
+
+    private void createTextFile(String scheduleString) {
         try {
             File textFile = new File("Schedule.txt");
             
@@ -119,7 +187,7 @@ public class ScheduleMaker implements ActionListener, MouseListener{
 
             // Create the FileWriter object to write into a text file
             FileWriter textWriter = new FileWriter(textFile);
-            textWriter.write(schedule);
+            textWriter.write(scheduleString);
             textWriter.close();
         } catch (IOException e) {
 
