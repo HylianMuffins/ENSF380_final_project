@@ -18,6 +18,9 @@ public class Hour implements Cloneable{
             throw new IllegalArgumentException();
         }
         this.HOUR = hour;
+
+        // TODO: delete ths line below when testing with hour is done
+        if (Math.round(Math.random()) * 1 == 1) {this.backupBoolean = true; }
     }
 
     // Getters and setters
