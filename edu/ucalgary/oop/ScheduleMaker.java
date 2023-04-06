@@ -103,25 +103,29 @@ public class ScheduleMaker implements ActionListener, MouseListener{
             if (confirmation.containsValue(Integer.valueOf(1))) {
                  try {
                     Schedule schedule = new Schedule(sqlData.getAnimals(), sqlData.getTreatments());
-                    
                     // reschedule treatments as prompt by the user
                     schedule.getTasks().get("treatment").forEach(treatment -> {
                         if (confirmation.containsKey(Integer.valueOf(treatment.getStartTime())) &&
                          (confirmation.get(Integer.valueOf(treatment.getStartTime())) == Integer.valueOf(1))) {
+
                             String dialogMessage = "The treatment " + treatment.getDescription() + " at " +
-                             treatment.getStartTime() +":00 must be moved to\naccommodate for unavailable backup" +
+                             treatment.getStartTime() +":00 must be moved to\naccommodate for unavailable backup." +
                              "\nPlease enter a number from 0 to 23.";
                             
                             while (true) {
+                                // prompts user for new treatment time
                                 String userInput = JOptionPane.showInputDialog(frame, dialogMessage, "Treatment Time Change Required - Please Contact the Vet", JOptionPane.WARNING_MESSAGE);
 
                                 try {
+                                    // Validates treatment and store into the sql database
                                     if (validateTreatmentTime(userInput)) {
+                                        int currentTreatmentID = ((Treatment)treatment).getTreatmentID();
 
+                                        sqlData.setStartTime(currentTreatmentID, ((int)Integer.parseInt(userInput)));
+                                        JOptionPane.showMessageDialog(null, "Database has been updated successfully!");
                                     } else {
                                         throw new TimeConflictException();
                                     }
-                                    //TODO: Do something with the userInput (Do something  with the data base, before remaking the schedule)
                                     break;
                                 } catch (NumberFormatException e1){
                                     JOptionPane.showMessageDialog(null, "Input entered not valid, please try again", 
@@ -134,6 +138,9 @@ public class ScheduleMaker implements ActionListener, MouseListener{
                             }
                         }
                     });
+
+                    JOptionPane.showMessageDialog(null, "All needed treatments have been updated, please try generating the schedule again");
+                    sqlData = new SqlConnector();
                 }catch (CloneNotSupportedException e1) {
                 } catch (TimeConflictException e1) {
 
