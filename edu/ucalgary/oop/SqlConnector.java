@@ -41,11 +41,33 @@ public class SqlConnector {
     }
   }
 
+  //getters
+
   public ArrayList<Animal> getAnimals() {
     return this.animals;
   }
 
   public ArrayList<Task> getTreatments() {
     return this.treatments;
+  }
+
+  // used to update the start time of one of the treatments in the database if scheduling is impossible
+  public void setStartTime(int treatmentID, int startTime) {
+    try {
+      // create connection with oop user
+      Class.forName("com.mysql.cj.jdbc.Driver");
+      Connection con=DriverManager.getConnection("jdbc:mysql://localhost/EWR","oop","password");
+
+      // write and execute a statement to update the correct treatment
+      Statement stmt=con.createStatement();
+      stmt.executeQuery(String.format("UPDATE TREATMENTS SET StartHour = %d WHERE TreatmentID = %d", startTime, treatmentID));
+
+      // close connection
+      con.close();
+
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+    
   }
 }
