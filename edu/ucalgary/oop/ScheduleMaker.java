@@ -1,8 +1,6 @@
 package edu.ucalgary.oop;
 
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.EventQueue;
 import javax.swing.*;
 import java.awt.event.*;
@@ -94,7 +92,8 @@ public class ScheduleMaker implements ActionListener, MouseListener{
                         confirmation.put(hour, Integer.valueOf(userChoice));
                         break;
                     } else {
-                        JOptionPane.showMessageDialog(null, "Please confirm the availability of the backup!");
+                        JOptionPane.showMessageDialog(null, "Please confirm the availability of the backup!",
+                         "Error - Unconfirmed Backup", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             });
@@ -102,19 +101,39 @@ public class ScheduleMaker implements ActionListener, MouseListener{
             // If confirmation contains a 1, then the user has selected that a backup is unavailable at a specific time.
             // Otherwise, all backups are available and the schedule will be genereated.
             if (confirmation.containsValue(Integer.valueOf(1))) {
-                //TODO: Zach will do this :)
-                // General Comments that may help?:
-                /*
-                 * The variable 'confirmation' stores the information of the 'hour' as the key, and an Integer (not int) as a value.
-                 * The value stored will be 0 if the back up is available, 1 if they are not available.
-                 * 
-                 * 
-                 */
-
                  try {
                     Schedule schedule = new Schedule(sqlData.getAnimals(), sqlData.getTreatments());
                     
+                    // reschedule treatments as prompt by the user
+                    schedule.getTasks().get("treatment").forEach(treatment -> {
+                        if (confirmation.containsKey(Integer.valueOf(treatment.getStartTime())) &&
+                         (confirmation.get(Integer.valueOf(treatment.getStartTime())) == Integer.valueOf(1))) {
+                            String dialogMessage = "The treatment " + treatment.getDescription() + " at " +
+                             treatment.getStartTime() +":00 must be moved to\naccommodate for unavailable backup" +
+                             "\nPlease enter a number from 0 to 23.";
+                            
+                            while (true) {
+                                String userInput = JOptionPane.showInputDialog(frame, dialogMessage, "Treatment Time Change Required - Please Contact the Vet", JOptionPane.WARNING_MESSAGE);
 
+                                try {
+                                    if (validateTreatmentTime(userInput)) {
+
+                                    } else {
+                                        throw new TimeConflictException();
+                                    }
+                                    //TODO: Do something with the userInput (Do something  with the data base, before remaking the schedule)
+                                    break;
+                                } catch (NumberFormatException e1){
+                                    JOptionPane.showMessageDialog(null, "Input entered not valid, please try again", 
+                                    "Error - Incorrect Input", JOptionPane.ERROR_MESSAGE);
+                                } catch (TimeConflictException e1) {
+                                    JOptionPane.showMessageDialog(null, "Time conflict unable to be solved!", 
+                                    "Error - Time Conflict", JOptionPane.ERROR_MESSAGE);
+                                    break;
+                                }
+                            }
+                        }
+                    });
                 }catch (CloneNotSupportedException e1) {
                 } catch (TimeConflictException e1) {
 
@@ -191,6 +210,20 @@ public class ScheduleMaker implements ActionListener, MouseListener{
             textWriter.close();
         } catch (IOException e) {
 
+        }
+    }
+
+    private boolean validateTreatmentTime(String userInput) {
+        try {
+            if (userInput == null) {
+                return false;
+            } else if (Integer.valueOf(userInput) >= Integer.valueOf(0) && Integer.valueOf(userInput) <= Integer.valueOf(23)) {
+                return true;
+            } else {
+                throw new NumberFormatException();
+            }
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException();
         }
     }
 
