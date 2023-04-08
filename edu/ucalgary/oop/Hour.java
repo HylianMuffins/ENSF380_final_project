@@ -15,7 +15,7 @@ public class Hour implements Cloneable{
      */
     public Hour(int hour) throws IllegalArgumentException{
         if (hour < 0 || hour > 23) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Hour value is < 0 OR Hour value is > 23");
         }
         this.HOUR = hour;
 
@@ -36,7 +36,7 @@ public class Hour implements Cloneable{
      */
     public void updateTimeAvailable(int timeTaken) throws IllegalArgumentException {
         if (timeTaken > timeAvailable) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Not enough time available");
         }
 
         this.timeAvailable = this.timeAvailable - timeTaken;
