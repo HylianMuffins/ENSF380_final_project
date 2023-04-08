@@ -301,7 +301,7 @@ public class UnitTesting {
         /**
         * The Following test is to test whether Raccoon's feedingPrepTime, feedingTime, cleaningTime, starttime is correctly written.
         */
-        AnimalTypes animalType5 = AnimalTypes.RACCOON;
+        AnimalTypes animalType5 = AnimalTypes.RACOON;
         int[] expectedTime5 = {0, 5, 5, 0};
         assertArrayEquals(expectedTime5, animalType5.getTime());
 
