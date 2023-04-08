@@ -15,7 +15,7 @@ public class Treatment extends Task{
     /**
     * Treatment constructor; creates new Task object of type Treatment by
     * calling the Task super constructor.
-    * @param description description of treatment
+    * @param description description of treatment.
     * @param duration length of time needed to complete treatment.
     * @param maxWindow flexibility of treatment given in hours.
     * @param startTime the first hour in window of hours the task can be done.
