@@ -11,7 +11,8 @@ public enum AnimalTypes{
     
     COYOTE{
         public int[] getTime() {
-            int[] returnArray = {10, 5, 5, 19}; //feedingPrepTime, feedingTime, cleaningTime, starttime
+            //feedingPrepTime, feedingTime, cleaningTime, feedingStartTime
+            int[] returnArray = {10, 5, 5, 19};
             return returnArray;
         }
     }, 
