@@ -23,10 +23,11 @@ public class Task {
     * @param maxWindow flexibility of task given in hours.
     * @param startTime the first hour in window of hours the task can be done.
     */
-    public Task(String description, int duration, int maxWindow, int startTIme){
+    public Task(String description, int duration, int maxWindow, int startTime){
         this.description = description;
         this.duration = duration;
         this.maxWindow = maxWindow;
+        this.startTime = startTime;
     }
 
     /**

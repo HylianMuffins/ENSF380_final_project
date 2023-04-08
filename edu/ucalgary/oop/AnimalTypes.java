@@ -36,7 +36,7 @@ public enum AnimalTypes{
         }
     },
 
-    RACOON{
+    RACCOON{
         public int[] getTime() {
             int[] returnArray = {0, 5, 5, 0};
             return returnArray;

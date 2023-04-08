@@ -37,9 +37,10 @@ public class Schedule {
     // Initializing variables
     this.treatmentTasks = treatments;
     this.animals = animals;
+    this.DATE = LocalDate.now().plusDays(1);
 
     for (int hour = 0; hour < 24; hour++) {
-      hourList.set(hour, new Hour(hour));
+      hourList.add(new Hour(hour));
     }
 
     // creates a list of ids for orphaned animals that don't need to be 

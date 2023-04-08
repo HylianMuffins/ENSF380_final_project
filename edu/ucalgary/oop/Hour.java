@@ -13,7 +13,7 @@ public class Hour implements Cloneable{
     private int timeAvailable = 60;
     private final int HOUR;
     private boolean backupBoolean = false;
-    private ArrayList<Task> tasks;
+    private ArrayList<Task> tasks = new ArrayList<Task>();
 
     /**
      * Hour constructor taking in hour and setting the HOUR variable.
@@ -26,6 +26,9 @@ public class Hour implements Cloneable{
             throw new IllegalArgumentException();
         }
         this.HOUR = hour;
+
+        // TODO: delete ths line below when testing with hour is done
+        if (Math.round(Math.random()) * 1 == 1) {this.backupBoolean = true; }
     }
 
     /**
