@@ -28,8 +28,8 @@ public class Schedule {
    * importance and then in order of time flexibility.
    * @param animals ArrayList of Animal objects imported from database.
    * @param treatments ArrayList of Treatment objects from database.
-   * @throws TimeConflictException
-   * @throws CloneNotSupportedException
+   * @throws TimeConflictException when it is impossible to create the schedule
+   * @throws CloneNotSupportedException when Hour is not clonable
    */
   public Schedule(ArrayList<Animal> animals, ArrayList<Task> treatments) 
     throws TimeConflictException, CloneNotSupportedException {

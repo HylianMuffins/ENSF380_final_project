@@ -19,7 +19,7 @@ public class Hour implements Cloneable{
      * Hour constructor taking in hour and setting the HOUR variable.
      * Throws an exception if the hour is not between 0 and 23.
     * @param hour int from 0 to 23 in 24 hour time.
-    * @throws IllegalArgumentException
+    * @throws IllegalArgumentException when hour is not from 0 to 23
     */
     public Hour(int hour) throws IllegalArgumentException{
         if (hour < 0 || hour > 23) {
@@ -80,7 +80,7 @@ public class Hour implements Cloneable{
     * Calculates the remaining available time of the hour.
     * Throws an exception if there is not enough available time.
     @param timeTaken Duration of task being scheduled.
-    @throws IllegalArgumentException
+    @throws IllegalArgumentException when not enough time is available
     */
     public void updateTimeAvailable(int timeTaken) throws IllegalArgumentException {
         if (timeTaken > timeAvailable) {
@@ -93,7 +93,7 @@ public class Hour implements Cloneable{
     /**
     * Clones the hour object, but not by a complete deep copy as the tasks
     * are never changed, only the ArrayList of tasks is changed.
-    @throws CloneNotSupportedException
+    @throws CloneNotSupportedException when Hour is not clonable
     */
     public Object clone() throws CloneNotSupportedException {
 
