@@ -1,3 +1,10 @@
 .vscode
 Schedule.txt
 *.class
+*.html
+*.css
+*.js
+*.zip
+resources
+jquery
+element-list
