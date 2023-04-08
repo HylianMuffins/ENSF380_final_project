@@ -58,7 +58,7 @@ public class Hour implements Cloneable{
     /**
     * Setter method that updates the boolean denoting if a backup volunteer is 
     * scheduled or not.
-    * @param backupBoolean
+    * @param backupBoolean true for scheduling a backup, false for canceling.
     */
     public void setBackupBoolean(boolean backupBoolean) { 
         this.backupBoolean = backupBoolean;
@@ -67,7 +67,7 @@ public class Hour implements Cloneable{
     /**
      * Setter method that updates the tasks ArrayList.
      * Designed for use with cloner.
-     * @param newTasks
+     * @param newTasks ArrayList of new tasks.
      */
     public void setTasks(ArrayList<Task> newTasks) {
         this.tasks = newTasks;
@@ -76,7 +76,7 @@ public class Hour implements Cloneable{
     /**
     * Calculates the remaining available time of the hour.
     * Throws an exception if there is not enough available time.
-    @param timeTaken
+    @param timeTaken Duration of task being scheduled.
     @throws IllegalArgumentException
     */
     public void updateTimeAvailable(int timeTaken) throws IllegalArgumentException {
@@ -90,8 +90,7 @@ public class Hour implements Cloneable{
     /**
     * Clones the hour object, but not by a complete deep copy as the tasks
     * are never changed, only the ArrayList of tasks is changed.
-    @param timeTaken
-    @throws IllegalArgumentException
+    @throws CloneNotSupportedException
     */
     public Object clone() throws CloneNotSupportedException {
 
