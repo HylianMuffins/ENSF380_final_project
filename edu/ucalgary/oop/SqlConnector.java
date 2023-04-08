@@ -60,7 +60,7 @@ public class SqlConnector {
 
       // write and execute a statement to update the correct treatment
       Statement stmt=con.createStatement();
-      stmt.executeQuery(String.format("UPDATE TREATMENTS SET StartHour = %d WHERE TreatmentID = %d", startTime, treatmentID));
+      stmt.executeUpdate(String.format("UPDATE TREATMENTS SET StartHour = %d WHERE TreatmentID = %d", startTime, treatmentID));
 
       // close connection
       con.close();
