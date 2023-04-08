@@ -3,8 +3,8 @@ package edu.ucalgary.oop;
 import java.util.ArrayList;
 
 /**
-* The Feeding class represents the type of task used in the schedule to feed a certain
-* number of animals of any given species.
+* The Feeding class represents the type of task used in the schedule to feed 
+* a certain number of animals of any given species.
 *
 * @author  Sudarshan Naicker
 * @version 1.3
@@ -15,12 +15,17 @@ public class Feeding extends Task {
     private ArrayList<Animal> hungryAnimals;
 
     /**
-    * Feeding constructor that derives all necessary values from the species and number of animals that are being fed.
+    * Feeding constructor that derives all necessary values from the species
+    * and number of animals that are being fed.
     * @param species Specifies the species of the animals being fed.
     * @param hungryAnimals Contains references to all the animals being fed.
     */
     public Feeding(String species, ArrayList<Animal> hungryAnimals) {
-        super(createDescription(species, hungryAnimals), createDuration(species, hungryAnimals), 3, createStartTime(species));
+        super(createDescription(species, hungryAnimals), 
+            createDuration(species, hungryAnimals), 
+            3, 
+            createStartTime(species)
+        );
         this.species = species;
         this.hungryAnimals = hungryAnimals;
     }
@@ -52,7 +57,8 @@ public class Feeding extends Task {
     }
 
     /**
-    * A private method used to generate a description of the task to send to the Task super constructor.
+    * Private method used to generate a description of the task to send to
+    * the Task super constructor.
     * @return description of task.
     */
     private static String createDescription(String species, ArrayList<Animal> hungryAnimals) {
@@ -67,11 +73,14 @@ public class Feeding extends Task {
             i++;
         }
         String animalString = tmp.toString();
-        return String.format("Feeding - %s (%d: %s)", species, hungryAnimals.size(), animalString);
+        return String.format("Feeding - %s (%d: %s)", 
+            species, hungryAnimals.size(), animalString
+        );
     }
 
     /**
-    * A private method used to generate the duration of the task to send to the Task super constructor.
+    * Private method used to generate the duration of the task to send to
+    * the Task super constructor.
     * @return duration of task.
     */
     private static int createDuration(String species, ArrayList<Animal> hungryAnimals) {
@@ -84,7 +93,8 @@ public class Feeding extends Task {
     }
 
     /**
-    * A private method used to generate the start time of the task to send to the Task super constructor.
+    * Private method used to generate the start time of the task to send to
+    * the Task super constructor.
     * @return start time of task.
     */
     private static int createStartTime(String species) {
