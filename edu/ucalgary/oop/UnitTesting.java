@@ -153,18 +153,32 @@ public class UnitTesting {
         
         Schedule rutvi = new Schedule(actualset, actualTreat); // Calling schedule constructor
 
+        /*
+        * Testing the getanimals for schedule.java
+        * @author Rutvi Brahmbhatt
+        */
         ArrayList<Animal> actualAnimal = rutvi.getAnimals();
         assertEquals("getAnimal() is not working properly",expectedset, actualAnimal); //Tests the getAnimal() function in schedule.java
 
+        /*
+        * Testing the gettasks for schedule.java
+        * @author Rutvi Brahmbhatt
+        */
         HashMap<String, ArrayList<Task>> actualtask = rutvi.getTasks();
         assertEquals(3, actualtask.get("treatment").size()); // Assert that the size of the ArrayList for key "Treatment" is 3
 
-
+        /* 
+        * Testing the getDate for schedule.java
+        * @author Sudarshan Naicker
+        */
         LocalDate expectedDate = LocalDate.of(2023, 4, 9); // add the next day here to test getData function()
         LocalDate actualDate = rutvi.getDate();
         assertEquals("getDate() is not able to give tommorow's date", expectedDate, actualDate); //Tests whether the getDate() function is working as intented
 
-
+        /*
+        * Testing the getHourList for schedule.java
+        * @author Sudarshan Naicker
+        */
         ArrayList<Hour> actualList = rutvi.getHourList();
         assertEquals("gethourlist() is not working", 24, actualList.size());
 
@@ -301,7 +315,7 @@ public class UnitTesting {
         /**
         * The Following test is to test whether Raccoon's feedingPrepTime, feedingTime, cleaningTime, starttime is correctly written.
         */
-        AnimalTypes animalType5 = AnimalTypes.RACOON;
+        AnimalTypes animalType5 = AnimalTypes.RACCOON;
         int[] expectedTime5 = {0, 5, 5, 0};
         assertArrayEquals(expectedTime5, animalType5.getTime());
 
