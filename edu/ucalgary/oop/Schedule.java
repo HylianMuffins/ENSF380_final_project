@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Main class that creates tasks, organizes them in the most efficient way,
+ * Main Scheduling class that creates tasks, organizes them in the most efficient way,
  * and stores them in a list of hours. Also handles deciding when to ask for
  * backups.
  * 

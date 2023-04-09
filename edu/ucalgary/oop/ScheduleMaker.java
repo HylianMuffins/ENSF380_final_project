@@ -8,15 +8,30 @@ import java.util.*;
 import java.awt.GridBagLayout;
 import java.io.*;
 
+/**
+ * Main Program class that handles the user interaction and connection of
+ * components.
+ * 
+ * @author Ken Liu
+ * @version 1.5
+ * @since 2023-04-04
+ */
 public class ScheduleMaker implements ActionListener, MouseListener {
     private SqlConnector sqlData = new SqlConnector();
     private String scheduleString = "";
     private JFrame frame = new JFrame("Schedule Builder");
 
+    /**
+     * Constructor for ScheduleMaker, starts the GUI window
+     */
     public ScheduleMaker() {
         setupGUI();
     }
 
+    /**
+     * Helper method called by ScheduleMaker constructor to setup and run the GUI.
+     * Mosty existing for organizational purposes.
+     */
     private void setupGUI() {
         // Sets up the frame called to contain
         // the necessary components, also setting the size and location when created.
@@ -50,6 +65,15 @@ public class ScheduleMaker implements ActionListener, MouseListener {
         frame.setVisible(true);
     }
 
+    /**
+     * Method for tracking when button is pressed, which creates a new schedule and
+     * prompts for backup
+     * confirmations, then allows user to move tasks if backups are
+     * unavailable.
+     * 
+     * @param event ActionEvent that is triggered when the "create schedule" button
+     *              is pressed
+     */
     public void actionPerformed(ActionEvent event) {
         LinkedHashMap<Integer, String> confirmBackupMessage = new LinkedHashMap<Integer, String>();
         // Check if schedule is made successfully, if it is print the message success
@@ -179,6 +203,15 @@ public class ScheduleMaker implements ActionListener, MouseListener {
 
     }
 
+    /**
+     * Generates the text that will be stored in the Schedule.txt file
+     * 
+     * @param schedule the schedule object that the schedule text will be generated
+     *                 from.
+     * @param backups  A hashmap relating hour number to their need for backups. 1
+     *                 means a backup is needed.
+     * @return A string that can be stored in a txt file.
+     */
     private String createScheduleString(Schedule schedule, HashMap<Integer, Integer> backups) {
         this.scheduleString += "Schedule for " + schedule.getDate().toString() + "\n\n";
         // Loops through each hour, and if the time available has not changed then don't
@@ -194,8 +227,7 @@ public class ScheduleMaker implements ActionListener, MouseListener {
                 }
 
                 // Loops through all tasks that are needed in that hour, and store its
-                // description
-                // into the string
+                // description into the string
                 for (int i = 0; i < hour.getTasks().size(); i++) {
                     scheduleString += "* " + hour.getTasks().get(i).getDescription() + "\n";
                 }
@@ -207,6 +239,11 @@ public class ScheduleMaker implements ActionListener, MouseListener {
         return scheduleString.trim();
     }
 
+    /**
+     * Creates a text file from the string returned from createScheduleString.
+     * 
+     * @param scheduleString string with hours and task descriptions listed.
+     */
     private void createTextFile(String scheduleString) {
         try {
             File textFile = new File("Schedule.txt");
@@ -229,6 +266,13 @@ public class ScheduleMaker implements ActionListener, MouseListener {
         }
     }
 
+    /**
+     * Validates user inputs for changing the start time of a treatment.
+     * 
+     * @param userInput value that will be validated only if it is between 0 and 23
+     *                  inclusive.
+     * @return true if valid input, false if invalid.
+     */
     private boolean validateTreatmentTime(String userInput) {
         try {
             if (userInput == null) {
@@ -244,24 +288,41 @@ public class ScheduleMaker implements ActionListener, MouseListener {
         }
     }
 
+    /**
+     * Implamentation of inherited abstract method.
+     */
     public void mouseClicked(MouseEvent event) {
     }
 
+    /**
+     * Implamentation of inherited abstract method.
+     */
     public void mouseEntered(MouseEvent event) {
-
     }
 
+    /**
+     * Implamentation of inherited abstract method.
+     */
     public void mouseExited(MouseEvent event) {
-
     }
 
+    /**
+     * Implamentation of inherited abstract method.
+     */
     public void mousePressed(MouseEvent event) {
     }
 
+    /**
+     * Implamentation of inherited abstract method.
+     */
     public void mouseReleased(MouseEvent event) {
-
     }
 
+    /**
+     * Main method that creates a ScheduleMaker object which in turn runs the GUI.
+     * 
+     * @param args Unused.
+     */
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             new ScheduleMaker();
