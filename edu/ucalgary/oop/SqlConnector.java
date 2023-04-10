@@ -18,8 +18,10 @@ public class SqlConnector {
   /**
    * SqlConnector constructor that forms a connection with database and stores
    * the values it reads in its private variables.
+   * 
+   * @throws SQLConectionException when the database cannot be connected to
    */
-  public SqlConnector() {
+  public SqlConnector() throws SQLConectionException {
     try {
       // create connection with oop user.
       Class.forName("com.mysql.cj.jdbc.Driver");
@@ -58,8 +60,7 @@ public class SqlConnector {
       con.close();
 
     } catch (Exception e) {
-      // TODO: add exception throw here for when sql connection fails.
-      System.out.println(e);
+      throw new SQLConectionException();
     }
   }
 
@@ -87,8 +88,9 @@ public class SqlConnector {
    * 
    * @param treatmentID ID of treatment being rescheduled.
    * @param startTime   New start time of treatment being rescheduled.
+   * @throws SQLConectionException
    */
-  public void setStartTime(int treatmentID, int startTime) {
+  public void setStartTime(int treatmentID, int startTime) throws SQLConectionException {
     try {
       // create connection with oop user
       Class.forName("com.mysql.cj.jdbc.Driver");
@@ -108,8 +110,7 @@ public class SqlConnector {
       con.close();
 
     } catch (Exception e) {
-      // TODO: add exception throw here for when sql connection fails.
-      System.out.println(e);
+      throw new SQLConectionException();
     }
   }
 }

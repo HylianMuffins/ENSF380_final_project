@@ -378,7 +378,6 @@ public class Schedule {
    * @param orphanIDs ArrayList of ids of orphan animals
    */
   private void generateTasks(ArrayList<Integer> orphanIDs) {
-    // TODO: Refactor this code with loops and the enum
 
     // initiate arraylists to organise species
     ArrayList<Animal> coyotes = new ArrayList<Animal>();
@@ -434,11 +433,21 @@ public class Schedule {
     }
 
     // create feeding tasks
-    this.feedingTasks.add(new Feeding("coyote", hungryCoyotes));
-    this.feedingTasks.add(new Feeding("fox", hungryFoxes));
-    this.feedingTasks.add(new Feeding("porcupine", hungryPorcupines));
-    this.feedingTasks.add(new Feeding("beaver", hungryBeavers));
-    this.feedingTasks.add(new Feeding("raccoon", hungryRaccoons));
+    if (hungryCoyotes.size() > 0) {
+      this.feedingTasks.add(new Feeding("coyote", hungryCoyotes));
+    }
+    if (hungryFoxes.size() > 0) {
+      this.feedingTasks.add(new Feeding("fox", hungryFoxes));
+    }
+    if (hungryPorcupines.size() > 0) {
+      this.feedingTasks.add(new Feeding("porcupine", hungryPorcupines));
+    }
+    if (hungryBeavers.size() > 0) {
+      this.feedingTasks.add(new Feeding("beaver", hungryBeavers));
+    }
+    if (hungryRaccoons.size() > 0) {
+      this.feedingTasks.add(new Feeding("raccoon", hungryRaccoons));
+    }
 
     // create cleaning tasks
     for (Animal animal : this.animals) {

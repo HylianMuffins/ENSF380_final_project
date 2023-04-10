@@ -7,6 +7,6 @@ package edu.ucalgary.oop;
  * @version 1.0
  * @since 2023-04-01
  */
-public class TimeConflictException extends Throwable {
+public class TimeConflictException extends Exception {
 
 }

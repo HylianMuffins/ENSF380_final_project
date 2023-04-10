@@ -27,19 +27,19 @@ public class UnitTesting {
      */
     @Test
     public void testTaskGetters() {
-        Task testtask = new Task("trial task", 30, 1, 0);
+        Task testtask = new Cleaning("test nickname", "beaver");
 
         int trialstartTime = testtask.getStartTime();
         assertEquals("getStartTime for Task.java does not work", 0, trialstartTime);
 
         String trialgetDescription = testtask.getDescription();
-        assertEquals("detDescription for Task.java does not work as Intended", "trial task", trialgetDescription);
+        assertEquals("detDescription for Task.java does not work as Intended", "Cleaing - beaver (test nickname)", trialgetDescription);
 
         int trialgetDuration = testtask.getDuration();
-        assertEquals("getDuration for Task.java does not work", 30, trialgetDuration);
+        assertEquals("getDuration for Task.java does not work", 5, trialgetDuration);
 
         int trialgetMaxWindow = testtask.getMaxWindow();
-        assertEquals("GetMaxWindow for Task.java does not work", 1, trialgetMaxWindow);
+        assertEquals("GetMaxWindow for Task.java does not work", 24, trialgetMaxWindow);
 
     }
 
@@ -52,7 +52,7 @@ public class UnitTesting {
     public void testTaskSetters() {
 
         int startTime = 0;
-        Task testtask2 = new Task("trial task2", 30, 1, 5);
+        Task testtask2 = new Cleaning("test nickname", "beaver");
         int expectedStartTime = 0;
         testtask2.setStartTime(startTime); // though we pass an argument of 5 in the above line, setStartTime is called
                                            // here which changed the StartTime to 0.
@@ -185,7 +185,7 @@ public class UnitTesting {
          * @author Sudarshan Naicker
          */
         // add the next day here to test getData function()
-        LocalDate expectedDate = LocalDate.of(2023, 4, 9);
+        LocalDate expectedDate = LocalDate.now().plusDays(1);
         LocalDate actualDate = rutvi.getDate();
         // Tests whether the getDate() function is working as intented
         assertEquals("getDate() is not able to give tommorow's date", expectedDate, actualDate);

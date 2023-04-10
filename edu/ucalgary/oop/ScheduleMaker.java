@@ -17,7 +17,7 @@ import java.io.*;
  * @since 2023-04-04
  */
 public class ScheduleMaker implements ActionListener, MouseListener {
-    private SqlConnector sqlData = new SqlConnector();
+    private SqlConnector sqlData;
     private String scheduleString = "";
     private JFrame frame = new JFrame("Schedule Builder");
 
@@ -80,6 +80,7 @@ public class ScheduleMaker implements ActionListener, MouseListener {
         // message
         // else, print the confirm backup
         try {
+            this.sqlData = new SqlConnector();
             Schedule schedule = new Schedule(sqlData.getAnimals(), sqlData.getTreatments());
 
             // Checks if backup is needed at all
@@ -93,7 +94,7 @@ public class ScheduleMaker implements ActionListener, MouseListener {
                 throw new UnconfirmedBackupsException();
             }
 
-            createTextFile(createScheduleString(schedule, null));
+            createTextFile(createScheduleString(schedule, new HashMap<Integer, Integer>()));
 
             JOptionPane.showMessageDialog(null, "Schedule has been successfully made! Closing the program...");
             frame.dispose();
@@ -165,6 +166,10 @@ public class ScheduleMaker implements ActionListener, MouseListener {
                                     JOptionPane.showMessageDialog(null, "Time conflict unable to be solved!",
                                             "Error - Time Conflict", JOptionPane.ERROR_MESSAGE);
                                     break;
+                                } catch (SQLConectionException e1) {
+                                    JOptionPane.showMessageDialog(null, "Failed to connect to the database.\nCheck your MySQL settings and try again.",
+                                            "Error - Database Connection Failure", JOptionPane.ERROR_MESSAGE);
+                                    break;
                                 }
                             }
                         }
@@ -175,7 +180,11 @@ public class ScheduleMaker implements ActionListener, MouseListener {
                     sqlData = new SqlConnector();
                 } catch (CloneNotSupportedException e1) {
                 } catch (TimeConflictException e1) {
-
+                    JOptionPane.showMessageDialog(null, "Time conflict unable to be solved!",
+                        "Error - Time Conflict", JOptionPane.ERROR_MESSAGE);
+                } catch (SQLConectionException e1) {
+                    JOptionPane.showMessageDialog(null, "Failed to connect to the database.\nCheck your MySQL settings and try again.",
+                        "Error - Database Connection Failure", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
                 // Reattempts to create the schedule with the all available backups listed in
@@ -196,9 +205,12 @@ public class ScheduleMaker implements ActionListener, MouseListener {
 
         } catch (TimeConflictException e) {
 
+        } catch (SQLConectionException e) {
+            JOptionPane.showMessageDialog(null, "Failed to connect to the database.\nCheck your MySQL settings and try again.",
+                "Error - Database Connection Failure", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Something Unexepected has occured...");
-            // e.printStackTrace();
+            e.printStackTrace();
         }
 
     }
