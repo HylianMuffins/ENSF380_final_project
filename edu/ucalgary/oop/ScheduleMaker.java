@@ -19,6 +19,7 @@ import java.io.*;
 public class ScheduleMaker implements ActionListener, MouseListener {
     private SqlConnector sqlData;
     private String scheduleString = "";
+    private boolean noProblems = true;
     private JFrame frame = new JFrame("Schedule Builder");
 
     /**
@@ -81,6 +82,7 @@ public class ScheduleMaker implements ActionListener, MouseListener {
         // else, print the confirm backup
         try {
             this.sqlData = new SqlConnector();
+            this.noProblems = true;
             Schedule schedule = new Schedule(sqlData.getAnimals(), sqlData.getTreatments());
 
             // Checks if backup is needed at all
@@ -131,11 +133,26 @@ public class ScheduleMaker implements ActionListener, MouseListener {
             // Otherwise, all backups are available and the schedule will be genereated.
             if (confirmation.containsValue(Integer.valueOf(1))) {
                 try {
+                    this.sqlData = new SqlConnector();
                     Schedule schedule = new Schedule(sqlData.getAnimals(), sqlData.getTreatments());
-                    // reschedule treatments as prompt by the user
-                    schedule.getTasks().get("treatment").forEach(treatment -> {
-                        if (confirmation.containsKey(Integer.valueOf(treatment.getStartTime())) &&
-                                (confirmation.get(Integer.valueOf(treatment.getStartTime())) == Integer.valueOf(1))) {
+                    for (Hour hour : schedule.getHourList()) {
+                        if (confirmation.containsKey(Integer.valueOf(hour.getHour())) &&
+                                (confirmation.get(Integer.valueOf(hour.getHour())) == Integer.valueOf(1))) {
+
+                            ArrayList<Task> tasks = hour.getTasks();
+                            Task treatment = null;
+                            for (Task task : tasks) {
+                                // chooses to move the last treatment in the hour to avoid moving kit feeding as
+                                // much as possible
+                                if (task instanceof Treatment) {
+                                    treatment = task;
+                                }
+                            }
+
+                            if (treatment == null) {
+                                this.noProblems = false;
+                                break;
+                            }
 
                             String dialogMessage = "The treatment " + treatment.getDescription() + " at " +
                                     treatment.getStartTime()
@@ -165,20 +182,27 @@ public class ScheduleMaker implements ActionListener, MouseListener {
                                 } catch (TimeConflictException e1) {
                                     JOptionPane.showMessageDialog(null, "Time conflict unable to be solved!",
                                             "Error - Time Conflict", JOptionPane.ERROR_MESSAGE);
+                                    this.noProblems = false;
                                     break;
                                 } catch (SQLConectionException e1) {
                                     JOptionPane.showMessageDialog(null,
                                             "Failed to connect to the database.\nCheck your MySQL settings and try again.",
                                             "Error - Database Connection Failure", JOptionPane.ERROR_MESSAGE);
+                                    this.noProblems = false;
                                     break;
                                 }
                             }
                         }
-                    });
+                    }
 
-                    JOptionPane.showMessageDialog(null,
-                            "All needed treatments have been updated, please try generating the schedule again");
-                    sqlData = new SqlConnector();
+                    if (this.noProblems) {
+                        JOptionPane.showMessageDialog(null,
+                                "All needed treatments have been updated, please try generating the schedule again");
+                    } else {
+                        JOptionPane.showMessageDialog(null,
+                                "Schedule creation failed.\nPlease try again.",
+                                "Error", JOptionPane.WARNING_MESSAGE);
+                    }
                 } catch (CloneNotSupportedException e1) {
                 } catch (TimeConflictException e1) {
                     JOptionPane.showMessageDialog(null, "Time conflict unable to be solved!",
@@ -206,7 +230,7 @@ public class ScheduleMaker implements ActionListener, MouseListener {
             }
 
         } catch (TimeConflictException e) {
-
+            e.printStackTrace();
         } catch (SQLConectionException e) {
             JOptionPane.showMessageDialog(null,
                     "Failed to connect to the database.\nCheck your MySQL settings and try again.",

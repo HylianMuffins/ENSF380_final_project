@@ -6,5 +6,5 @@ package edu.ucalgary.oop;
  * @since 2023-04-10
  */
 public class SQLConectionException extends Exception {
-
+    
 }

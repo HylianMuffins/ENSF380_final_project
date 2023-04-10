@@ -52,6 +52,7 @@ public class SqlConnector {
             treatmentResults.getInt(7),
             treatmentResults.getInt(8),
             treatmentResults.getInt(4),
+            treatmentResults.getInt(3),
             treatmentResults.getInt(1),
             treatmentResults.getInt(2)));
       }
@@ -60,6 +61,7 @@ public class SqlConnector {
       con.close();
 
     } catch (Exception e) {
+      e.printStackTrace();
       throw new SQLConectionException();
     }
   }
@@ -101,7 +103,7 @@ public class SqlConnector {
 
       // write and execute a statement to update the correct treatment
       Statement stmt = con.createStatement();
-      stmt.executeQuery(String.format("UPDATE TREATMENTS SET " +
+      stmt.executeUpdate(String.format("UPDATE TREATMENTS SET " +
           "StartHour = %d WHERE TreatmentID = %d",
           startTime,
           treatmentID));
@@ -110,6 +112,7 @@ public class SqlConnector {
       con.close();
 
     } catch (Exception e) {
+      e.printStackTrace();
       throw new SQLConectionException();
     }
   }

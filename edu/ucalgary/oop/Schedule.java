@@ -51,7 +51,7 @@ public class Schedule {
     ArrayList<Integer> orphans = new ArrayList<Integer>();
 
     for (Task treatment : treatments) {
-      if (((Treatment) treatment).getTreatmentID() == 1
+      if (((Treatment)treatment).getTaskID() == 1
           && !orphans.contains(((Treatment) treatment).getAnimalID())) {
         orphans.add(((Treatment) treatment).getAnimalID());
       }

@@ -151,9 +151,9 @@ public class UnitTesting {
         expectedset.add(animal3);
 
         // Created 3 animal Objects
-        Treatment treat1 = new Treatment("Kit feeding", 30, 2, 0, 1, 6);
-        Treatment treat2 = new Treatment("Rebandage leg wound", 20, 1, 0, 1, 6);
-        Treatment treat3 = new Treatment("Apply burn ointment back", 10, 3, 0, 1, 6);
+        Treatment treat1 = new Treatment("Kit feeding", 30, 2, 0, 1, 1, 6);
+        Treatment treat2 = new Treatment("Rebandage leg wound", 20, 1, 0, 2, 2, 6);
+        Treatment treat3 = new Treatment("Apply burn ointment back", 10, 3, 0, 3, 3, 6);
 
         // Actual arraylist for treatment
         ArrayList<Task> actualTreat = new ArrayList<Task>();
@@ -283,7 +283,7 @@ public class UnitTesting {
     // Treatment Id and AnimalId
     @Test
     public void testTreatmentGetters() {
-        Treatment treatment1 = new Treatment("Flush neck wound", 25, 1, 6, 5, 8);
+        Treatment treatment1 = new Treatment("Flush neck wound", 25, 1, 6, 2, 5, 8);
 
         int actualAnimalId = treatment1.getAnimalID();
         int expectedAnimalId = 8;
