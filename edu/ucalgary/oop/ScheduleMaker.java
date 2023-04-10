@@ -167,7 +167,8 @@ public class ScheduleMaker implements ActionListener, MouseListener {
                                             "Error - Time Conflict", JOptionPane.ERROR_MESSAGE);
                                     break;
                                 } catch (SQLConectionException e1) {
-                                    JOptionPane.showMessageDialog(null, "Failed to connect to the database.\nCheck your MySQL settings and try again.",
+                                    JOptionPane.showMessageDialog(null,
+                                            "Failed to connect to the database.\nCheck your MySQL settings and try again.",
                                             "Error - Database Connection Failure", JOptionPane.ERROR_MESSAGE);
                                     break;
                                 }
@@ -181,10 +182,11 @@ public class ScheduleMaker implements ActionListener, MouseListener {
                 } catch (CloneNotSupportedException e1) {
                 } catch (TimeConflictException e1) {
                     JOptionPane.showMessageDialog(null, "Time conflict unable to be solved!",
-                        "Error - Time Conflict", JOptionPane.ERROR_MESSAGE);
+                            "Error - Time Conflict", JOptionPane.ERROR_MESSAGE);
                 } catch (SQLConectionException e1) {
-                    JOptionPane.showMessageDialog(null, "Failed to connect to the database.\nCheck your MySQL settings and try again.",
-                        "Error - Database Connection Failure", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null,
+                            "Failed to connect to the database.\nCheck your MySQL settings and try again.",
+                            "Error - Database Connection Failure", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
                 // Reattempts to create the schedule with the all available backups listed in
@@ -206,8 +208,9 @@ public class ScheduleMaker implements ActionListener, MouseListener {
         } catch (TimeConflictException e) {
 
         } catch (SQLConectionException e) {
-            JOptionPane.showMessageDialog(null, "Failed to connect to the database.\nCheck your MySQL settings and try again.",
-                "Error - Database Connection Failure", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    "Failed to connect to the database.\nCheck your MySQL settings and try again.",
+                    "Error - Database Connection Failure", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Something Unexepected has occured...");
             e.printStackTrace();
