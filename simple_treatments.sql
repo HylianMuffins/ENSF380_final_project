@@ -11,7 +11,9 @@ CREATE TABLE ANIMALS (
 );
 
 INSERT INTO ANIMALS (AnimalID, AnimalNickname, AnimalSpecies) VALUES
-(1, 'Slinky', 'fox');
+(1, 'Slinky', 'fox'),
+(2, 'Slinky2', 'fox'),
+(3, 'Slinky3', 'fox');
 
 DROP TABLE IF EXISTS TASKS;
 CREATE TABLE TASKS (
@@ -23,9 +25,12 @@ CREATE TABLE TASKS (
 );
 
 INSERT INTO TASKS (TaskID, Description, Duration, MaxWindow) VALUES
-(9, 'Eyedrops', 45, 1),
-(10, 'your mother', 45, 1),
-(11, 'pain and suffering', 45, 1);
+(2, 'Rebandage leg wound', 20, 1),
+(3, 'Apply burn ointment back', 30, 3),
+(4, 'Administer antibiotics', 5, 2),
+(5, 'Flush neck wound', 25, 1),
+(9, 'Eyedrops', 40, 1),
+(10, 'Inspect broken leg', 45, 1);
 
 DROP TABLE IF EXISTS TREATMENTS;
 CREATE TABLE TREATMENTS (
@@ -37,6 +42,12 @@ CREATE TABLE TREATMENTS (
 );
 
 INSERT INTO TREATMENTS (AnimalID, TaskID, StartHour) VALUES
-(1, 9, 12),
-(1, 10, 12),
-(1, 11, 12);
+(1, 2, 12),
+(1, 4, 12),
+(1, 5, 13),
+(1, 9, 13),
+(2, 3, 16),
+(4, 2, 16),
+(2, 10, 20),
+(3, 10, 20),
+(4, 10, 20);

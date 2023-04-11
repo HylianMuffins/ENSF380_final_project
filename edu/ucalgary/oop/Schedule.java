@@ -223,7 +223,7 @@ public class Schedule {
       // for when there is still no room in the available window and backup
       // volunteers are already scheduled
       if (!placed) {
-        throw new TimeConflictException();
+        throw new TimeConflictException(task);
       }
     }
   }

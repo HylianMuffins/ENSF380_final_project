@@ -8,5 +8,15 @@ package edu.ucalgary.oop;
  * @since 2023-04-01
  */
 public class TimeConflictException extends Exception {
+    private Task task;
+    public TimeConflictException(Task task) {
+        this.task = task;
+    }
+    public TimeConflictException() {
+        this.task = null;
+    }
 
+    public Task getTask() {
+        return this.task;
+    }
 }
