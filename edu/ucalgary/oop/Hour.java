@@ -8,6 +8,7 @@ import java.util.ArrayList;
  * @author Ken Liu
  * @version 1.4
  * @since 2023-03-29
+ * Zachariah Blair, Ken Liu, Sudarshan Naicker, Rutvi Brahmbhatt
  */
 public class Hour implements Cloneable {
     private int timeAvailable = 60;

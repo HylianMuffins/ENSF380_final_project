@@ -7,6 +7,7 @@ package edu.ucalgary.oop;
  * @author Rutvi Brahmbhatt
  * @version 1.4
  * @since 2023-03-31
+ * Zachariah Blair, Ken Liu, Sudarshan Naicker, Rutvi Brahmbhatt
  */
 public class Cleaning extends Task {
     private String animalNickname;

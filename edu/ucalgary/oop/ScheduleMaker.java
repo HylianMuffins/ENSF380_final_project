@@ -15,6 +15,7 @@ import java.io.*;
  * @author Ken Liu
  * @version 1.5
  * @since 2023-04-04
+ * Zachariah Blair, Ken Liu, Sudarshan Naicker, Rutvi Brahmbhatt
  */
 public class ScheduleMaker implements ActionListener {
     private SqlConnector sqlData;

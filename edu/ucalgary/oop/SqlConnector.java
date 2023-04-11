@@ -10,6 +10,7 @@ import java.util.ArrayList;
  * @author Zachariah Blair
  * @version 1.3
  * @since 2023-04-03
+ * Zachariah Blair, Ken Liu, Sudarshan Naicker, Rutvi Brahmbhatt
  */
 public class SqlConnector {
   private ArrayList<Animal> animals = new ArrayList<Animal>();

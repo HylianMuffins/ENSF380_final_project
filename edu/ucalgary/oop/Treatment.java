@@ -7,6 +7,7 @@ package edu.ucalgary.oop;
  * @author Rutvi Brahmbhatt
  * @version 1.3
  * @since 2023-03-31
+ * Zachariah Blair, Ken Liu, Sudarshan Naicker, Rutvi Brahmbhatt
  */
 public class Treatment extends Task {
     private final int TASKID;

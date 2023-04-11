@@ -12,6 +12,7 @@ import java.util.HashMap;
  * @author Zachariah Blair
  * @version 1.6
  * @since 2023-04-01
+ * Zachariah Blair, Ken Liu, Sudarshan Naicker, Rutvi Brahmbhatt
  */
 public class Schedule {
   private ArrayList<Hour> hourList = new ArrayList<Hour>();

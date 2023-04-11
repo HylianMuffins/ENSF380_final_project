@@ -14,6 +14,7 @@ import java.time.LocalDate;
  * @author Rutvi Brahmbhatt UCID: 30141734
  * @author Sudarshan Naicker UCID: 30162797
  * @since 2023-04-07
+ * Zachariah Blair, Ken Liu, Sudarshan Naicker, Rutvi Brahmbhatt
  */
 public class UnitTesting {
 

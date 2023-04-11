@@ -6,6 +6,7 @@ package edu.ucalgary.oop;
  * @author Sudarshan Naicker, Rutvi Brahmbhatt
  * @version 1.3
  * @since 2023-03-31
+ * Zachariah Blair, Ken Liu, Sudarshan Naicker, Rutvi Brahmbhatt
  */
 public enum AnimalTypes {
 

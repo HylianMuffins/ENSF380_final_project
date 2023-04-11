@@ -7,6 +7,7 @@ package edu.ucalgary.oop;
  * @author Sudarshan Naicker
  * @version 1.1
  * @since 2023-04-01
+ * Zachariah Blair, Ken Liu, Sudarshan Naicker, Rutvi Brahmbhatt
  */
 public abstract class Task {
     private String description;

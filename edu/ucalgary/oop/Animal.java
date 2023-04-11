@@ -6,6 +6,7 @@ package edu.ucalgary.oop;
  * @author Ken Liu
  * @version 1.1
  * @since 2023-03-29
+ * Zachariah Blair, Ken Liu, Sudarshan Naicker, Rutvi Brahmbhatt
  */
 public class Animal {
     private String nickname;

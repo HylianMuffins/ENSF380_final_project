@@ -9,6 +9,7 @@ import java.util.ArrayList;
  * @author Sudarshan Naicker
  * @version 1.3
  * @since 2023-04-01
+ * Zachariah Blair, Ken Liu, Sudarshan Naicker, Rutvi Brahmbhatt
  */
 public class Feeding extends Task {
     private String species;
