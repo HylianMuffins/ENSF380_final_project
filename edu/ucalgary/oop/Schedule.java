@@ -15,7 +15,7 @@ import java.util.HashMap;
  */
 public class Schedule {
   private ArrayList<Hour> hourList = new ArrayList<Hour>();
-  private LocalDate DATE;
+  private final LocalDate DATE;
   private ArrayList<Animal> animals;
   private ArrayList<Task> cleaningTasks = new ArrayList<Task>();
   private ArrayList<Task> feedingTasks = new ArrayList<Task>();
@@ -157,7 +157,7 @@ public class Schedule {
       if (!placed && splittable) {
 
         // create list of hours within the window
-        ArrayList<Hour> window = (ArrayList<Hour>) this.hourList.subList(startTime, startTime + maxWindow);
+        ArrayList<Hour> window = new ArrayList<Hour>(this.hourList.subList(startTime, startTime + maxWindow));
 
         // choose most empty hours in window first one at a time, until all
         // animals are fed, or all hours have been checked places tasks in copy
@@ -195,6 +195,7 @@ public class Schedule {
         }
         if (canBePlaced) {
           splitFeeding(window, task, canBePlaced);
+          placed = true;
         }
 
       } else if (!placed) {
@@ -257,8 +258,8 @@ public class Schedule {
       // get info about hour and the task
       int freeTime = hour.getTimeAvailable();
       String species = ((Feeding) taskToBeSplit).getSpecies();
-      int prepTime = AnimalTypes.valueOf(species).getTime()[0];
-      int feedingTime = AnimalTypes.valueOf(species).getTime()[1];
+      int prepTime = AnimalTypes.valueOf(species.toUpperCase()).getTime()[0];
+      int feedingTime = AnimalTypes.valueOf(species.toUpperCase()).getTime()[1];
 
       // calculate # of animals that can be fed
       int animalRoom = (freeTime - prepTime) / feedingTime;
@@ -267,10 +268,14 @@ public class Schedule {
       }
       ArrayList<Animal> hungryAnimalsToSplit = ((Feeding) taskToBeSplit).getHungryAnimals();
 
+      if (hungryAnimalsToSplit.size() < animalRoom) {
+        animalRoom = hungryAnimalsToSplit.size();
+      }
+
       // take the first (animalRoom) animals and make a new task for
       // feeding them
       ArrayList<Animal> splitOffAnimals = new ArrayList<Animal>();
-      for (Animal animal : (ArrayList<Animal>) hungryAnimalsToSplit.subList(0, animalRoom)) {
+      for (Animal animal : new ArrayList<Animal>(hungryAnimalsToSplit.subList(0, animalRoom))) {
         splitOffAnimals.add(animal);
       }
       Feeding splitOffTask = new Feeding(species, splitOffAnimals);
@@ -282,9 +287,9 @@ public class Schedule {
       // update the task to be split and go again, or exit the loop, if there
       // are no more animals to feed
       ArrayList<Animal> leftOverAnimals = new ArrayList<Animal>();
-      for (Animal animal : (ArrayList<Animal>) hungryAnimalsToSplit.subList(
+      for (Animal animal : new ArrayList<Animal>(hungryAnimalsToSplit.subList(
           animalRoom,
-          hungryAnimalsToSplit.size())) {
+          hungryAnimalsToSplit.size()))) {
         leftOverAnimals.add(animal);
       }
 
