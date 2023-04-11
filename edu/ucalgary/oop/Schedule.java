@@ -51,7 +51,7 @@ public class Schedule {
     ArrayList<Integer> orphans = new ArrayList<Integer>();
 
     for (Task treatment : treatments) {
-      if (((Treatment) treatment).getTreatmentID() == 1
+      if (((Treatment)treatment).getTaskID() == 1
           && !orphans.contains(((Treatment) treatment).getAnimalID())) {
         orphans.add(((Treatment) treatment).getAnimalID());
       }
@@ -223,7 +223,7 @@ public class Schedule {
       // for when there is still no room in the available window and backup
       // volunteers are already scheduled
       if (!placed) {
-        throw new TimeConflictException();
+        throw new TimeConflictException(task);
       }
     }
   }
@@ -378,7 +378,6 @@ public class Schedule {
    * @param orphanIDs ArrayList of ids of orphan animals
    */
   private void generateTasks(ArrayList<Integer> orphanIDs) {
-    // TODO: Refactor this code with loops and the enum
 
     // initiate arraylists to organise species
     ArrayList<Animal> coyotes = new ArrayList<Animal>();
@@ -434,11 +433,21 @@ public class Schedule {
     }
 
     // create feeding tasks
-    this.feedingTasks.add(new Feeding("coyote", hungryCoyotes));
-    this.feedingTasks.add(new Feeding("fox", hungryFoxes));
-    this.feedingTasks.add(new Feeding("porcupine", hungryPorcupines));
-    this.feedingTasks.add(new Feeding("beaver", hungryBeavers));
-    this.feedingTasks.add(new Feeding("raccoon", hungryRaccoons));
+    if (hungryCoyotes.size() > 0) {
+      this.feedingTasks.add(new Feeding("coyote", hungryCoyotes));
+    }
+    if (hungryFoxes.size() > 0) {
+      this.feedingTasks.add(new Feeding("fox", hungryFoxes));
+    }
+    if (hungryPorcupines.size() > 0) {
+      this.feedingTasks.add(new Feeding("porcupine", hungryPorcupines));
+    }
+    if (hungryBeavers.size() > 0) {
+      this.feedingTasks.add(new Feeding("beaver", hungryBeavers));
+    }
+    if (hungryRaccoons.size() > 0) {
+      this.feedingTasks.add(new Feeding("raccoon", hungryRaccoons));
+    }
 
     // create cleaning tasks
     for (Animal animal : this.animals) {

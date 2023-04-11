@@ -27,11 +27,6 @@ public class Hour implements Cloneable {
             throw new IllegalArgumentException("Hour value is < 0 OR Hour value is > 23");
         }
         this.HOUR = hour;
-
-        // TODO: delete ths line below when testing with hour is done
-        if (Math.round(Math.random()) * 1 == 1) {
-            this.backupBoolean = true;
-        }
     }
 
     /**

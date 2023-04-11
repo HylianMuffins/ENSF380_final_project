@@ -16,9 +16,10 @@ import java.io.*;
  * @version 1.5
  * @since 2023-04-04
  */
-public class ScheduleMaker implements ActionListener, MouseListener {
-    private SqlConnector sqlData = new SqlConnector();
+public class ScheduleMaker implements ActionListener {
+    private SqlConnector sqlData;
     private String scheduleString = "";
+    private boolean noProblems = true;
     private JFrame frame = new JFrame("Schedule Builder");
 
     /**
@@ -80,6 +81,8 @@ public class ScheduleMaker implements ActionListener, MouseListener {
         // message
         // else, print the confirm backup
         try {
+            this.sqlData = new SqlConnector();
+            this.noProblems = true;
             Schedule schedule = new Schedule(sqlData.getAnimals(), sqlData.getTreatments());
 
             // Checks if backup is needed at all
@@ -93,7 +96,7 @@ public class ScheduleMaker implements ActionListener, MouseListener {
                 throw new UnconfirmedBackupsException();
             }
 
-            createTextFile(createScheduleString(schedule, null));
+            createTextFile(createScheduleString(schedule, new HashMap<Integer, Integer>()));
 
             JOptionPane.showMessageDialog(null, "Schedule has been successfully made! Closing the program...");
             frame.dispose();
@@ -130,52 +133,34 @@ public class ScheduleMaker implements ActionListener, MouseListener {
             // Otherwise, all backups are available and the schedule will be genereated.
             if (confirmation.containsValue(Integer.valueOf(1))) {
                 try {
+                    this.sqlData = new SqlConnector();
                     Schedule schedule = new Schedule(sqlData.getAnimals(), sqlData.getTreatments());
-                    // reschedule treatments as prompt by the user
-                    schedule.getTasks().get("treatment").forEach(treatment -> {
-                        if (confirmation.containsKey(Integer.valueOf(treatment.getStartTime())) &&
-                                (confirmation.get(Integer.valueOf(treatment.getStartTime())) == Integer.valueOf(1))) {
-
-                            String dialogMessage = "The treatment " + treatment.getDescription() + " at " +
-                                    treatment.getStartTime()
-                                    + ":00 must be moved to\naccommodate for unavailable backup." +
-                                    "\nPlease enter a number from 0 to 23.";
-
-                            while (true) {
-                                // prompts user for new treatment time
-                                String userInput = JOptionPane.showInputDialog(frame, dialogMessage,
-                                        "Treatment Time Change Required - Please Contact the Vet",
-                                        JOptionPane.WARNING_MESSAGE);
-
-                                try {
-                                    // Validates treatment and store into the sql database
-                                    if (validateTreatmentTime(userInput)) {
-                                        int currentTreatmentID = ((Treatment) treatment).getTreatmentID();
-
-                                        sqlData.setStartTime(currentTreatmentID, ((int) Integer.parseInt(userInput)));
-                                        JOptionPane.showMessageDialog(null, "Database has been updated successfully!");
-                                    } else {
-                                        throw new TimeConflictException();
-                                    }
-                                    break;
-                                } catch (NumberFormatException e1) {
-                                    JOptionPane.showMessageDialog(null, "Input entered not valid, please try again",
-                                            "Error - Incorrect Input", JOptionPane.ERROR_MESSAGE);
-                                } catch (TimeConflictException e1) {
-                                    JOptionPane.showMessageDialog(null, "Time conflict unable to be solved!",
-                                            "Error - Time Conflict", JOptionPane.ERROR_MESSAGE);
-                                    break;
-                                }
+                    for (Hour hour : schedule.getHourList()) {
+                        if (confirmation.containsKey(Integer.valueOf(hour.getHour())) &&
+                                (confirmation.get(Integer.valueOf(hour.getHour())) == Integer.valueOf(1))) {
+                            this.moveTask(hour);
+                            if (!this.noProblems) {
+                                break;
                             }
                         }
-                    });
+                    }
 
-                    JOptionPane.showMessageDialog(null,
-                            "All needed treatments have been updated, please try generating the schedule again");
-                    sqlData = new SqlConnector();
+                    if (this.noProblems) {
+                        JOptionPane.showMessageDialog(null,
+                                "All needed treatments have been updated, please try generating the schedule again");
+                    } else {
+                        JOptionPane.showMessageDialog(null,
+                                "Schedule creation failed.\nPlease try again.",
+                                "Error", JOptionPane.WARNING_MESSAGE);
+                    }
                 } catch (CloneNotSupportedException e1) {
                 } catch (TimeConflictException e1) {
-
+                    JOptionPane.showMessageDialog(null, "Time conflict unable to be solved!",
+                            "Error - Time Conflict", JOptionPane.ERROR_MESSAGE);
+                } catch (SQLConectionException e1) {
+                    JOptionPane.showMessageDialog(null,
+                            "Failed to connect to the database.\nCheck your MySQL settings and try again.",
+                            "Error - Database Connection Failure", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
                 // Reattempts to create the schedule with the all available backups listed in
@@ -195,12 +180,124 @@ public class ScheduleMaker implements ActionListener, MouseListener {
             }
 
         } catch (TimeConflictException e) {
+            Task treatment = e.getTask();
+            if (treatment instanceof Treatment) {
+                String dialogMessage = "The treatment " + treatment.getDescription() + " at " +
+                        treatment.getStartTime()
+                        + ":00 must be moved\nbecause of a time conflict." +
+                        "\nPlease enter a number from 0 to 23.";
 
+                while (true) {
+                    // prompts user for new treatment time
+                    String userInput = JOptionPane.showInputDialog(frame, dialogMessage,
+                            "Treatment Time Change Required - Please Contact the Vet",
+                            JOptionPane.WARNING_MESSAGE);
+
+                    try {
+                        // Validates treatment and store into the sql database
+                        if (validateTreatmentTime(userInput)) {
+                            int currentTreatmentID = ((Treatment) treatment).getTreatmentID();
+
+                            sqlData.setStartTime(currentTreatmentID, ((int) Integer.parseInt(userInput)));
+                            JOptionPane.showMessageDialog(null, "Database has been updated successfully!");
+                        } else {
+                            throw new TimeConflictException();
+                        }
+                        break;
+                    } catch (NumberFormatException e1) {
+                        JOptionPane.showMessageDialog(null, "Input entered not valid, please try again",
+                                "Error - Incorrect Input", JOptionPane.ERROR_MESSAGE);
+                    } catch (TimeConflictException e1) {
+                        JOptionPane.showMessageDialog(null, "Time conflict unable to be solved!",
+                                "Error - Time Conflict", JOptionPane.ERROR_MESSAGE);
+                        this.noProblems = false;
+                        break;
+                    } catch (SQLConectionException e1) {
+                        JOptionPane.showMessageDialog(null,
+                                "Failed to connect to the database.\nCheck your MySQL settings and try again.",
+                                "Error - Database Connection Failure", JOptionPane.ERROR_MESSAGE);
+                        this.noProblems = false;
+                        break;
+                    }
+                }
+                if (this.noProblems) {
+                    JOptionPane.showMessageDialog(null,
+                            "All needed treatments have been updated, please try generating the schedule again");
+                } else {
+                    JOptionPane.showMessageDialog(null,
+                            "Schedule creation failed.\nPlease try again.",
+                            "Error", JOptionPane.WARNING_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Time conflict unable to be solved!",
+                        "Error - Time Conflict", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (SQLConectionException e) {
+            JOptionPane.showMessageDialog(null,
+                    "Failed to connect to the database.\nCheck your MySQL settings and try again.",
+                    "Error - Database Connection Failure", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Something Unexepected has occured...");
-            // e.printStackTrace();
+            e.printStackTrace();
         }
 
+    }
+
+    private void moveTask(Hour hour) {
+
+        ArrayList<Task> tasks = hour.getTasks();
+        Task treatment = null;
+        for (Task task : tasks) {
+            // chooses to move the last treatment in the hour to avoid moving kit feeding as
+            // much as possible
+            if (task instanceof Treatment) {
+                treatment = task;
+            }
+        }
+
+        if (treatment == null) {
+            this.noProblems = false;
+            return;
+        }
+
+        String dialogMessage = "The treatment " + treatment.getDescription() + " at " +
+                treatment.getStartTime()
+                + ":00 must be moved to\naccommodate for unavailable backup." +
+                "\nPlease enter a number from 0 to 23.";
+
+        while (true) {
+            // prompts user for new treatment time
+            String userInput = JOptionPane.showInputDialog(frame, dialogMessage,
+                    "Treatment Time Change Required - Please Contact the Vet",
+                    JOptionPane.WARNING_MESSAGE);
+
+            try {
+                // Validates treatment and store into the sql database
+                if (validateTreatmentTime(userInput)) {
+                    int currentTreatmentID = ((Treatment) treatment).getTreatmentID();
+
+                    sqlData.setStartTime(currentTreatmentID, ((int) Integer.parseInt(userInput)));
+                    JOptionPane.showMessageDialog(null, "Database has been updated successfully!");
+                } else {
+                    throw new TimeConflictException();
+                }
+                break;
+            } catch (NumberFormatException e1) {
+                JOptionPane.showMessageDialog(null, "Input entered not valid, please try again",
+                        "Error - Incorrect Input", JOptionPane.ERROR_MESSAGE);
+            } catch (TimeConflictException e1) {
+                JOptionPane.showMessageDialog(null, "Time conflict unable to be solved!",
+                        "Error - Time Conflict", JOptionPane.ERROR_MESSAGE);
+                this.noProblems = false;
+                break;
+            } catch (SQLConectionException e1) {
+                JOptionPane.showMessageDialog(null,
+                        "Failed to connect to the database.\nCheck your MySQL settings and try again.",
+                        "Error - Database Connection Failure", JOptionPane.ERROR_MESSAGE);
+                this.noProblems = false;
+                break;
+            }
+        }
     }
 
     /**
@@ -286,36 +383,6 @@ public class ScheduleMaker implements ActionListener, MouseListener {
         } catch (NumberFormatException e) {
             throw new NumberFormatException();
         }
-    }
-
-    /**
-     * Implamentation of inherited abstract method.
-     */
-    public void mouseClicked(MouseEvent event) {
-    }
-
-    /**
-     * Implamentation of inherited abstract method.
-     */
-    public void mouseEntered(MouseEvent event) {
-    }
-
-    /**
-     * Implamentation of inherited abstract method.
-     */
-    public void mouseExited(MouseEvent event) {
-    }
-
-    /**
-     * Implamentation of inherited abstract method.
-     */
-    public void mousePressed(MouseEvent event) {
-    }
-
-    /**
-     * Implamentation of inherited abstract method.
-     */
-    public void mouseReleased(MouseEvent event) {
     }
 
     /**

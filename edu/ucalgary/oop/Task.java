@@ -1,6 +1,5 @@
 package edu.ucalgary.oop;
 
-//TODO: maybe make this abstract to match the uml (if it doesn't break stuff).
 /**
  * The Task class represents any activity for volunteers to complete. Subclasses
  * include: Cleaning, Feeding and Treatment.
@@ -9,7 +8,7 @@ package edu.ucalgary.oop;
  * @version 1.1
  * @since 2023-04-01
  */
-public class Task {
+public abstract class Task {
     private String description;
     private int duration;
     private int maxWindow;

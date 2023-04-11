@@ -9,6 +9,7 @@ package edu.ucalgary.oop;
  * @since 2023-03-31
  */
 public class Treatment extends Task {
+    private final int TASKID;
     private final int TREATMENTID;
     private int animalID;
 
@@ -20,18 +21,29 @@ public class Treatment extends Task {
      * @param duration    length of time needed to complete treatment.
      * @param maxWindow   flexibility of treatment given in hours.
      * @param startTime   the first hour in window of hours the task can be done.
-     * @param treatmentID id of treatment.
+     * @param taskID      id of task type.
+     * @param treatmentID id of the treatment.
      * @param animalID    id of the animal this treatment is being performed on.
      */
     public Treatment(String description, int duration, int maxWindow,
-            int startTime, int treatmentID, int animalID) {
+            int startTime, int taskID, int treatmentID, int animalID) {
         super(description, duration, maxWindow, startTime);
+        this.TASKID = taskID;
         this.TREATMENTID = treatmentID;
         this.animalID = animalID;
     }
 
     /**
-     * Getter method that returns the id of this treatment.
+     * Getter method that returns the taskID of this treatment.
+     * 
+     * @return taskID.
+     */
+    public int getTaskID() {
+        return this.TASKID;
+    }
+
+    /**
+     * Getter method that returns the treatmentID of this treatment.
      * 
      * @return treatmentID.
      */
