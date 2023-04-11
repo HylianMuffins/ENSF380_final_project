@@ -2,6 +2,8 @@
 
 This is the ensf 380 final project repository completed by group 49.
 
+Link to presentation video: https://drive.google.com/file/d/1BeHeYGi5w7v-WhXaZ17nuoqKlZUcj66D/view?usp=sharing
+
 In order to run this program you must follow the following steps:
 
 1. Setting up MySQL
